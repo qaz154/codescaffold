@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Test coverage
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+*.tgz
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Web UI (if built)
+web/node_modules/
+web/.next/
+web/out/
+
+# Generated projects (test)
+generated/
+
+# Lock files (keep package-lock for npm)
+# package-lock.json

@@ -1,0 +1,82 @@
+{
+  "express-api": {
+    "baseFiles": [
+      { "outputPath": "package.json", "templatePath": "package.json", "generate": false },
+      { "outputPath": "tsconfig.json", "templatePath": "tsconfig.json", "generate": false },
+      { "outputPath": "docker-compose.yml", "templatePath": "docker-compose.yml", "generate": false },
+      { "outputPath": "Dockerfile", "templatePath": "Dockerfile", "generate": false },
+      { "outputPath": ".env.example", "templatePath": ".env.example", "generate": false },
+      { "outputPath": "vitest.config.ts", "templatePath": "vitest.config.ts", "generate": false },
+      { "outputPath": "src/server.ts", "templatePath": "src/server.ts", "generate": false },
+      { "outputPath": "src/middleware/auth.ts", "templatePath": "src/middleware/auth.ts", "generate": false },
+      { "outputPath": "src/utils/jwt.ts", "templatePath": "src/utils/jwt.ts", "generate": false },
+      { "outputPath": "src/utils/password.ts", "templatePath": "src/utils/password.ts", "generate": false },
+      { "outputPath": "prisma/schema.prisma", "generate": true, "promptKey": "schema", "merge": "replace" }
+    ],
+    "featureFiles": {
+      "auth": [
+        { "outputPath": "src/controllers/userController.ts", "generate": true, "promptKey": "user-management", "merge": "replace" },
+        { "outputPath": "src/routes/userRoutes.ts", "generate": true, "promptKey": "user-routes", "merge": "replace" }
+      ],
+      "crud": [
+        { "outputPath": "src/controllers/entityController.ts", "generate": true, "promptKey": "crud-generator", "merge": "replace" },
+        { "outputPath": "src/routes/entityRoutes.ts", "generate": true, "promptKey": "crud-routes", "merge": "replace" }
+      ],
+      "user-management": [
+        { "outputPath": "src/controllers/userController.ts", "generate": true, "promptKey": "user-management", "merge": "replace" },
+        { "outputPath": "src/routes/userRoutes.ts", "generate": true, "promptKey": "user-routes", "merge": "replace" }
+      ]
+    }
+  },
+  "nextjs-fullstack": {
+    "baseFiles": [
+      { "outputPath": "package.json", "templatePath": "package.json", "generate": false },
+      { "outputPath": "tsconfig.json", "templatePath": "tsconfig.json", "generate": false },
+      { "outputPath": "next.config.ts", "templatePath": "next.config.ts", "generate": false },
+      { "outputPath": "tailwind.config.ts", "templatePath": "tailwind.config.ts", "generate": false },
+      { "outputPath": "docker-compose.yml", "templatePath": "docker-compose.yml", "generate": false },
+      { "outputPath": "prisma/schema.prisma", "generate": true, "promptKey": "schema", "merge": "replace" }
+    ],
+    "featureFiles": {
+      "auth": [
+        { "outputPath": "app/api/auth/[...nextauth]/route.ts", "generate": true, "promptKey": "nextjs-auth" },
+        { "outputPath": "lib/auth.ts", "generate": true, "promptKey": "nextjs-auth-config" }
+      ],
+      "crud": [
+        { "outputPath": "app/api/entities/route.ts", "generate": true, "promptKey": "nextjs-crud" }
+      ]
+    }
+  },
+  "python-fastapi": {
+    "baseFiles": [
+      { "outputPath": "pyproject.toml", "templatePath": "pyproject.toml", "generate": false },
+      { "outputPath": "docker-compose.yml", "templatePath": "docker-compose.yml", "generate": false },
+      { "outputPath": "Dockerfile", "templatePath": "Dockerfile", "generate": false },
+      { "outputPath": "app/main.py", "templatePath": "app/main.py", "generate": false },
+      { "outputPath": "app/config.py", "templatePath": "app/config.py", "generate": false },
+      { "outputPath": "alembic.ini", "templatePath": "alembic.ini", "generate": false }
+    ],
+    "featureFiles": {
+      "auth": [
+        { "outputPath": "app/routers/auth.py", "generate": true, "promptKey": "fastapi-auth" },
+        { "outputPath": "app/dependencies.py", "generate": true, "promptKey": "fastapi-auth-deps" }
+      ]
+    }
+  },
+  "go-microservice": {
+    "baseFiles": [
+      { "outputPath": "go.mod", "templatePath": "go.mod", "generate": false },
+      { "outputPath": "docker-compose.yml", "templatePath": "docker-compose.yml", "generate": false },
+      { "outputPath": "Dockerfile", "templatePath": "Dockerfile", "generate": false },
+      { "outputPath": "cmd/server/main.go", "templatePath": "cmd/server/main.go", "generate": false },
+      { "outputPath": "internal/middleware/cors.go", "templatePath": "internal/middleware/cors.go", "generate": false },
+      { "outputPath": "pkg/db/postgres.go", "templatePath": "pkg/db/postgres.go", "generate": false }
+    ],
+    "featureFiles": {
+      "auth": [
+        { "outputPath": "internal/handlers/auth.go", "generate": true, "promptKey": "go-auth" },
+        { "outputPath": "internal/middleware/auth.go", "generate": true, "promptKey": "go-auth-middleware" }
+      ]
+    }
+  }
+}

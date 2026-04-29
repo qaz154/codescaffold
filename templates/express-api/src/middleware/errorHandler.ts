@@ -1,0 +1,57 @@
+import { Request, Response, NextFunction } from 'express';
+
+export interface AppError extends Error {
+  statusCode?: number;
+  isOperational?: boolean;
+}
+
+export function errorHandler(
+  err: AppError,
+  req: Request,
+  res: Response,
+  _next: NextFunction
+): void {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+
+  // Log error for debugging (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Error:', {
+      statusCode,
+      message,
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+    });
+  }
+
+  // Don't leak error details in production
+  const response = {
+    success: false,
+    error: {
+      message: process.env.NODE_ENV === 'production' && statusCode === 500
+        ? 'Internal Server Error'
+        : message,
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    },
+  };
+
+  res.status(statusCode).json(response);
+}
+
+export function notFoundHandler(req: Request, res: Response): void {
+  res.status(404).json({
+    success: false,
+    error: {
+      message: `Route ${req.method} ${req.path} not found`,
+    },
+  });
+}
+
+export function asyncHandler(
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
+) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
