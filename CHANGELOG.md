@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2026-05-12
+
+### Added
+
+#### 社区模板系统 (v1.14 路线图 - 第 3 周)
+- **新增 `template` 命令**: 管理社区模板
+- **添加模板**: `codescaffold template add github:user/repo`
+- **移除模板**: `codescaffold template remove <name>`
+- **列出模板**: `codescaffold template --list`
+- **本地存储**: 模板注册表存储在 ~/.codescaffold/templates.json
+
+### v1.14 路线图 - 第 3 周
+- 社区模板系统
+- 支持从 GitHub 添加模板
+
 ## [1.0.7] - 2026-05-12
 
 ### Added

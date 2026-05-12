@@ -162,6 +162,17 @@ program
     await composeCommand(options);
   });
 
+program
+  .command('template')
+  .description('管理社区模板')
+  .option('-l, --list', '列出所有模板')
+  .option('-a, --add <source>', '添加模板 (github:user/repo)')
+  .option('-r, --remove <name>', '移除模板')
+  .action(async (options) => {
+    const { templateCommand } = await import('../commands/template');
+    await templateCommand(options);
+  });
+
 async function main(): Promise<void> {
   showBanner();
   showSystemInfo();
