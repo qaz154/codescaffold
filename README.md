@@ -11,10 +11,11 @@ Generate production-ready project scaffolds in seconds. CodeScaffold takes your 
 
 ## Features
 
+- **🎯 Project Presets**: Quick-start templates for common project types
 - **🤖 Multi-Model AI Support**: OpenAI GPT, Anthropic Claude, and Local LLMs (Ollama)
 - **📦 4 Production Templates**: Next.js, Express, Python FastAPI, Go Microservice
-- **🎯 AI Code Generation**: LLM-powered custom code generation (not just template copying)
-- **💡 Chain-of-Thought Prompting**: High-quality, structured code generation with validation
+- **✅ Project Validation**: Validate project structure and security
+- **⬆️ Template Upgrade**: Upgrade existing projects to latest template version
 - **⚙️ Configuration File Support**: `.codescaffoldrc` for project-level settings
 - **🔧 Interactive CLI**: Guided project creation with inquirer prompts
 - **🌐 Web UI**: Visual project wizard with real-time analysis
@@ -29,9 +30,28 @@ npm install -g codescaffold
 # Interactive mode
 codescaffold init
 
+# Or use a preset for quick start
+codescaffold presets
+
 # Or use AI to generate custom code
 codescaffold generate --requirement "User management API with roles and JWT auth"
 ```
+
+## Presets
+
+Quick-start with pre-configured project types:
+
+```bash
+codescaffold presets
+```
+
+Available presets:
+- **REST API** - Express with auth, CRUD, PostgreSQL
+- **Next.js SaaS** - Full-stack SaaS with Stripe integration
+- **FastAPI ML Backend** - ML model serving with async and WebSocket
+- **Go Microservice** - Service with gRPC, health probes, metrics
+- **Admin Panel** - Dashboard with user management and analytics
+- **E-commerce API** - Products, orders, payments
 
 ## AI Providers
 
@@ -85,6 +105,40 @@ codescaffold config --init
 codescaffold config --show
 ```
 
+## Project Validation
+
+Validate a CodeScaffold-generated project:
+
+```bash
+# Validate current directory
+codescaffold validate
+
+# Validate specific directory
+codescaffold validate --directory ./my-project
+```
+
+Validation checks:
+- Required template files
+- Package/dependency configuration
+- Dockerfile presence
+- README and .gitignore
+- Hardcoded secrets detection
+
+## Template Upgrade
+
+Upgrade an existing project to the latest template version:
+
+```bash
+# Upgrade current directory
+codescaffold upgrade
+
+# Upgrade specific directory
+codescaffold upgrade --directory ./my-project
+
+# Skip backup
+codescaffold upgrade --no-backup
+```
+
 ## Templates
 
 | Template | Language | Best For | Key Features |
@@ -96,7 +150,7 @@ codescaffold config --show
 
 ## Usage
 
-### CLI
+### CLI Commands
 
 ```bash
 # Interactive mode
@@ -107,6 +161,15 @@ codescaffold create my-project --template express-api
 
 # AI-powered generation with custom code
 codescaffold generate --requirement "User management API with roles and JWT authentication"
+
+# Quick-start presets
+codescaffold presets
+
+# Validate project
+codescaffold validate
+
+# Upgrade template
+codescaffold upgrade
 
 # List templates
 codescaffold list
@@ -149,20 +212,18 @@ codescaffold serve
 codescaffold
 ├── src/
 │   ├── commands/          # CLI command implementations
+│   │   ├── presets.ts    # Project presets command
+│   │   ├── validate.ts   # Project validation
+│   │   └── upgrade.ts    # Template upgrade
 │   ├── generator/         # Project generation orchestration
 │   ├── ai/               # AI analysis and code generation
-│   │   ├── ai-service.ts # Multi-provider AI service
-│   │   ├── analyzer.ts   # Requirement analysis
-│   │   ├── code-generator.ts # AI code generation
-│   │   ├── prompts/     # Prompt templates with examples
-│   │   └── file-mapper.ts # Feature-to-file mapping
 │   └── utils/
 │       └── config.ts     # Configuration file support
 ├── templates/            # Project templates
-│   ├── express-api/     # Express.js TypeScript API
-│   ├── nextjs-fullstack/ # Next.js 15 + Express
-│   ├── python-fastapi/  # Python FastAPI
-│   └── go-microservice/ # Go Gin Microservice
+│   ├── express-api/
+│   ├── nextjs-fullstack/
+│   ├── python-fastapi/
+│   └── go-microservice/
 └── web/                 # Web UI (optional)
 ```
 

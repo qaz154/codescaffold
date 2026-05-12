@@ -122,6 +122,34 @@ program
     await configCommand(options);
   });
 
+program
+  .command('presets')
+  .description('Quick-start with project presets (API, SaaS, ML, etc.)')
+  .action(async () => {
+    const { presetsCommand } = await import('../commands/presets');
+    await presetsCommand();
+  });
+
+program
+  .command('validate')
+  .description('Validate a CodeScaffold-generated project')
+  .option('-d, --directory <path>', 'Project directory to validate', '.')
+  .action(async (options) => {
+    const { validateCommand } = await import('../commands/validate');
+    await validateCommand(options);
+  });
+
+program
+  .command('upgrade')
+  .description('Upgrade existing project to latest template version')
+  .option('-d, --directory <path>', 'Project directory to upgrade', '.')
+  .option('-f, --force', 'Skip confirmation prompts', false)
+  .option('--no-backup', 'Skip backup creation')
+  .action(async (options) => {
+    const { upgradeCommand } = await import('../commands/upgrade');
+    await upgradeCommand(options);
+  });
+
 async function main(): Promise<void> {
   showBanner();
   showSystemInfo();
