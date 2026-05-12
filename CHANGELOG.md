@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2026-05-12
+
+### Added
+
+#### DX 优化 (v1.14 路线图 - 第 4 周)
+- **偏好记忆**: 自动保存上次选择的组件
+- **智能配置**: 下次创建时自动填充上次选择
+- **偏好管理**: `codescaffold config --show` 查看偏好
+- **重置偏好**: `codescaffold config --reset-prefs` 重置
+- **本地存储**: 偏好存储在 ~/.codescaffold/preferences.json
+
+### v1.14 路线图 - 第 4 周
+- 偏好记忆系统
+- 智能默认值
+
 ## [1.0.8] - 2026-05-12
 
 ### Added

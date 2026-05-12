@@ -2,6 +2,7 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { handleCLIError } from '../utils/errors';
 import { ComponentCategory, ComponentOption, ProjectConfig, frameworks, databases, auth, ui } from '../components';
+import { loadPreferences, updatePreferences } from '../utils/preferences';
 
 interface ComposeOptions {
   name?: string;
@@ -40,6 +41,7 @@ export async function composeCommand(options: ComposeOptions): Promise<void> {
 }
 
 async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
+  const prefs = loadPreferences();
   let name = options.name;
 
   if (!name) {
@@ -55,7 +57,7 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
     name = answer.name;
   }
 
-  const framework = await selectComponent(frameworks);
+  const framework = await selectComponent(frameworks, prefs.lastFramework);
   if (!framework) {
     throw new Error('必须选择一个框架');
   }
@@ -65,10 +67,18 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
   let uiOption: ComponentOption | null = null;
 
   if (!options.minimal) {
-    database = await selectComponent(databases);
-    authOption = await selectComponent(auth);
-    uiOption = await selectComponent(ui);
+    database = await selectComponent(databases, prefs.lastDatabase);
+    authOption = await selectComponent(auth, prefs.lastAuth);
+    uiOption = await selectComponent(ui, prefs.lastUi);
   }
+
+  // 保存偏好
+  updatePreferences({
+    lastFramework: framework.id,
+    lastDatabase: database?.id,
+    lastAuth: authOption?.id,
+    lastUi: uiOption?.id,
+  });
 
   return {
     name: name || 'my-project',
@@ -80,7 +90,7 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
   };
 }
 
-async function selectComponent(category: ComponentCategory): Promise<ComponentOption | null> {
+async function selectComponent(category: ComponentCategory, lastChoice?: string): Promise<ComponentOption | null> {
   const choices = [
     ...category.options.map((opt) => ({
       name: `${opt.name} - ${opt.description}`,
@@ -89,12 +99,17 @@ async function selectComponent(category: ComponentCategory): Promise<ComponentOp
     ...(category.required ? [] : [{ name: '跳过', value: null }]),
   ];
 
+  const defaultIndex = lastChoice
+    ? choices.findIndex((c) => c.value && c.value.id === lastChoice)
+    : -1;
+
   const answer = await inquirer.prompt([
     {
       type: 'list',
       name: 'selected',
-      message: `选择${category.name}:`,
+      message: `选择${category.name}${lastChoice ? ' (回车使用上次选择)' : ''}:`,
       choices,
+      default: defaultIndex >= 0 ? defaultIndex : 0,
     },
   ]);
 
