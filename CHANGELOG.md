@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.12] - 2026-05-12
+
+### Added
+
+#### 测试集成 (v1.14 路线图 - 第 7 周)
+- **测试组件**: 4 个测试框架选项
+- **Vitest**: 快速单元测试框架（推荐）
+- **Jest**: 流行的 JavaScript 测试框架
+- **Playwright**: E2E 测试框架
+- **Cypress**: E2E 测试框架
+
+### v1.14 路线图 - 第 7 周
+- 内置测试框架支持
+- 测试配置生成
+
 ## [1.0.11] - 2026-05-12
 
 ### Added
