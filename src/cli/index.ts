@@ -5,10 +5,23 @@ import chalk from 'chalk';
 import boxen from 'boxen';
 import { initCommand } from '../commands/init';
 import { listCommand } from '../commands/list';
-import { version } from '../utils/version';
+import { version, checkForUpdates, printUpdateNotice } from '../utils/version';
+import { printConfigInfo } from '../utils/config';
+import { getAIService } from '../ai/openai-service';
+
+function printAIStatus(): void {
+  const service = getAIService();
+  const { provider, model } = service.getProviderInfo();
+
+  const statusText = service.isConfigured()
+    ? chalk.green('✓ Configured')
+    : chalk.yellow('⚠ Not configured');
+
+  console.log(chalk.dim(`  AI Provider: ${chalk.cyan(provider)} (${model}) ${statusText}`));
+}
 
 const asciiLogo = `
-${chalk.cyan('███╗   ███╗███████╗██████╗ ██╗ ██████╗')})
+${chalk.cyan('███╗   ███╗███████╗██████╗ ██╗ ██████╗')}
 ${chalk.cyan('████╗ ████║██╔════╝██╔══██╗██║██╔════╝')}
 ${chalk.cyan('██╔████╔██║█████╗  ██████╔╝██║██║  ███╗')}
 ${chalk.cyan('██║╚██╔╝██║██╔══╝  ██╔══██╗██║██║   ██║')}
@@ -18,15 +31,23 @@ ${chalk.cyan('╚═╝     ╚═╝╚══════╝╚═╝  ╚═�
 ${chalk.white('AI-Powered Full-Stack Project Scaffold Generator')}
 `;
 
-function showBanner() {
+function showBanner(): void {
   console.log(chalk.bold(asciiLogo));
   console.log(
     boxen(
       `${chalk.green('CodeScaffold')} v${version}\n` +
-      `${chalk.gray('Generate production-ready project scaffolds in seconds')}`,
+      `${chalk.gray('Generate production-ready project scaffolds in seconds')}\n\n` +
+      `${chalk.dim('Multi-model AI support: OpenAI, Claude, Local LLMs')}`,
       { padding: 1, borderColor: 'cyan', borderStyle: 'round' }
     )
   );
+  console.log();
+}
+
+function showSystemInfo(): void {
+  console.log(chalk.dim('System Info:'));
+  printAIStatus();
+  printConfigInfo();
   console.log();
 }
 
@@ -41,6 +62,8 @@ program
   .option('-t, --template <name>', 'Template to use')
   .option('-o, --output <path>', 'Output directory', '.')
   .option('-f, --force', 'Overwrite existing files', false)
+  .option('--provider <provider>', 'AI provider (openai, claude, local)')
+  .option('--model <model>', 'AI model to use')
   .action(initCommand);
 
 program
@@ -59,7 +82,7 @@ program
 program
   .command('create <name>')
   .description('Create a new project from template')
-  .option('-t, --template <name>', 'Template to use', 'nextjs-fullstack')
+  .option('-t, --template <name>', 'Template to use', 'express-api')
   .option('-o, --output <path>', 'Output directory', '.')
   .option('-f, --force', 'Overwrite existing files', false)
   .action(async (name, options) => {
@@ -73,6 +96,8 @@ program
   .option('-r, --requirement <text>', 'Natural language requirement')
   .option('-o, --output <path>', 'Output directory', '.')
   .option('-f, --force', 'Overwrite existing files', false)
+  .option('--provider <provider>', 'AI provider (openai, claude, local)')
+  .option('--model <model>', 'AI model to use')
   .action(async (options) => {
     const { generateCommand } = await import('../commands/generate');
     await generateCommand(options);
@@ -87,6 +112,29 @@ program
     await serveCommand(options);
   });
 
-showBanner();
+program
+  .command('config')
+  .description('Create or manage CodeScaffold configuration')
+  .option('--init', 'Create default config file in current directory')
+  .option('--show', 'Show current configuration')
+  .action(async (options) => {
+    const { configCommand } = await import('../commands/config');
+    await configCommand(options);
+  });
 
-program.parse();
+async function main(): Promise<void> {
+  showBanner();
+  showSystemInfo();
+
+  const updateInfo = await checkForUpdates();
+  if (updateInfo?.hasUpdate) {
+    printUpdateNotice(updateInfo.latestVersion);
+  }
+
+  program.parse();
+}
+
+main().catch((error) => {
+  console.error(chalk.red('Error:'), error.message);
+  process.exit(1);
+});

@@ -1,4 +1,3 @@
-import OpenAI from 'openai';
 import { z } from 'zod';
 
 const TEMPLATE_CHOICES = [
@@ -23,9 +22,9 @@ export interface AIServiceConfig {
   baseURL?: string;
   model?: string;
   timeout?: number;
+  provider?: 'openai' | 'claude' | 'local';
 }
 
-// Default timeout of 60 seconds for API calls
 const DEFAULT_TIMEOUT_MS = 60000;
 
 const AnalysisSchema = z.object({
@@ -68,14 +67,58 @@ Respond with this exact JSON structure:
 }`;
 
 export class AIService {
-  private client: OpenAI | null = null;
+  private client: import('openai').default | null = null;
   private apiKey: string | null = null;
+  private provider: 'openai' | 'claude' | 'local' = 'openai';
+  private model: string = 'gpt-4o-mini';
 
   constructor(config: AIServiceConfig = {}) {
-    if (config.apiKey) {
-      this.apiKey = config.apiKey;
+    this.provider = config.provider || this.detectProvider();
+    this.model = config.model || this.getDefaultModel();
+    this.apiKey = config.apiKey || this.getApiKey();
+
+    if (this.apiKey || this.provider === 'local') {
+      this.initializeClient(config);
+    }
+  }
+
+  private detectProvider(): 'openai' | 'claude' | 'local' {
+    const env = process.env;
+    if (env.ANTHROPIC_API_KEY || env.CLAUDE_API_KEY) return 'claude';
+    if (env.OPENAI_API_KEY) return 'openai';
+    if (env.OLLAMA_BASE_URL || env.LOCAL_LLM_URL) return 'local';
+    return 'openai';
+  }
+
+  private getDefaultModel(): string {
+    switch (this.provider) {
+      case 'claude': return 'claude-3-5-haiku-20241022';
+      case 'local': return 'llama3.1';
+      default: return 'gpt-4o-mini';
+    }
+  }
+
+  private getApiKey(): string | null {
+    const env = process.env;
+    switch (this.provider) {
+      case 'claude': return env.ANTHROPIC_API_KEY || env.CLAUDE_API_KEY || null;
+      case 'openai': return env.OPENAI_API_KEY || null;
+      default: return null;
+    }
+  }
+
+  private initializeClient(config: AIServiceConfig): void {
+    const OpenAI = require('openai').default;
+
+    if (this.provider === 'local') {
       this.client = new OpenAI({
-        apiKey: config.apiKey,
+        apiKey: 'ollama',
+        baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1',
+        timeout: config.timeout || DEFAULT_TIMEOUT_MS,
+      });
+    } else {
+      this.client = new OpenAI({
+        apiKey: this.apiKey || undefined,
         baseURL: config.baseURL,
         timeout: config.timeout || DEFAULT_TIMEOUT_MS,
       });
@@ -83,13 +126,17 @@ export class AIService {
   }
 
   isConfigured(): boolean {
-    return this.client !== null && this.apiKey !== null;
+    return this.client !== null;
+  }
+
+  getProviderInfo(): { provider: string; model: string } {
+    return { provider: this.provider, model: this.model };
   }
 
   async analyzeRequirements(requirement: string): Promise<AIAnalysisResult> {
     if (!this.client) {
       throw new Error(
-        'AI service not configured. Please set OPENAI_API_KEY environment variable.'
+        'AI service not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.'
       );
     }
 
@@ -97,7 +144,7 @@ export class AIService {
 
     try {
       const response = await this.client.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: this.model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
@@ -124,9 +171,6 @@ export class AIService {
       if (error instanceof z.ZodError) {
         throw new Error(`AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`);
       }
-      if (error instanceof OpenAI.APIError) {
-        throw new Error(`OpenAI API error: ${error.message}`);
-      }
       throw error;
     }
   }
@@ -138,13 +182,13 @@ export class AIService {
   ): Promise<T> {
     if (!this.client) {
       throw new Error(
-        'AI service not configured. Please set OPENAI_API_KEY environment variable.'
+        'AI service not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.'
       );
     }
 
     try {
       const response = await this.client.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: this.model,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -167,21 +211,16 @@ export class AIService {
       if (error instanceof z.ZodError) {
         throw new Error(`AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`);
       }
-      if (error instanceof OpenAI.APIError) {
-        throw new Error(`OpenAI API error: ${error.message}`);
-      }
       throw error;
     }
   }
 }
 
-// Singleton instance
 let aiServiceInstance: AIService | null = null;
 
-export function getAIService(): AIService {
-  if (!aiServiceInstance) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    aiServiceInstance = new AIService({ apiKey });
+export function getAIService(config?: AIServiceConfig): AIService {
+  if (!aiServiceInstance || config) {
+    aiServiceInstance = new AIService(config);
   }
   return aiServiceInstance;
 }

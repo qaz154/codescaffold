@@ -31,7 +31,7 @@ function convertAIResult(aiResult: AIAnalysisResult): AnalysisResult {
     database: aiResult.database,
     auth: aiResult.features.includes('auth'),
     api: true,
-    ui: aiResult.features.some((f) =>
+    ui: aiResult.features.some((f: string) =>
       ['admin-dashboard', 'frontend', 'ui'].includes(f.toLowerCase())
     ),
     docker: true,

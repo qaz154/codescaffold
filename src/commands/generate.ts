@@ -2,15 +2,32 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { generateWithAI } from '../generator';
 import { handleCLIError, ValidationError } from '../utils/errors';
+import { loadConfig } from '../utils/config';
+import { getAIService, AIServiceConfig } from '../ai/openai-service';
 
 interface GenerateOptions {
   requirement?: string;
   output?: string;
   force?: boolean;
+  provider?: 'openai' | 'claude' | 'local';
+  model?: string;
 }
 
 export async function generateCommand(options: GenerateOptions): Promise<void> {
   try {
+    const config = loadConfig();
+
+    const effectiveProvider = options.provider || config?.provider;
+    const effectiveModel = options.model || config?.model;
+    const effectiveOutput = options.output || config?.defaultOutput || '.';
+
+    if (effectiveProvider || effectiveModel) {
+      getAIService({
+        provider: effectiveProvider,
+        model: effectiveModel,
+      });
+    }
+
     let requirement = options.requirement;
 
     if (!requirement) {
@@ -31,7 +48,7 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
           type: 'input',
           name: 'output',
           message: 'Output directory:',
-          default: options.output || '.',
+          default: effectiveOutput,
         },
         {
           type: 'confirm',
@@ -53,9 +70,15 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
       );
     }
 
+    console.log(chalk.dim(`\nUsing AI provider: ${chalk.cyan(effectiveProvider || 'auto-detected')}`));
+    if (effectiveModel) {
+      console.log(chalk.dim(`Model: ${chalk.cyan(effectiveModel)}`));
+    }
+    console.log();
+
     const report = await generateWithAI({
       requirement,
-      output: options.output || '.',
+      output: options.output || effectiveOutput,
       force: options.force || false,
     });
 

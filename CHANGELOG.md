@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-05-12
+
+### Added
+
+#### Multi-Model AI Support
+- **Claude API Support**: Full integration with Anthropic's Claude models (claude-3-5-haiku, claude-3-5-sonnet)
+- **Local LLM Support**: Connect to Ollama or other OpenAI-compatible local servers
+- **Auto-detection**: Automatically detects available API keys and selects the best provider
+- **Provider selection**: New `--provider` and `--model` CLI options
+- **Environment variables**: `ANTHROPIC_API_KEY`, `CLAUDE_API_KEY`, `OLLAMA_BASE_URL`
+
+#### Configuration File Support
+- **`.codescaffoldrc`**: JSON configuration file support
+- **Project-level config**: Place config in project root for team sharing
+- **Global config**: Supports home directory configuration
+- **New `config` command**: `codescaffold config --init` to create default config
+- **Configurable options**: provider, model, defaultTemplate, defaultOutput, template overrides
+
+#### CLI Improvements
+- **Version check**: Automatic notification when new version is available
+- **System info display**: Shows AI provider and config status on startup
+- **New `config` command**: Create and manage configuration files
+
+### Changed
+- Improved error messages with actionable suggestions
+- Better user feedback during AI generation
+
+### Fixed
+- Handle missing API keys gracefully with clear instructions
+
 ## [1.0.1] - 2026-04-30
 
 ### Added
