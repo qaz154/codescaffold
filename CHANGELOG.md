@@ -5,6 +5,65 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.5] - 2026-05-12
+
+### Fixed
+
+#### Code Quality
+- **Offline detection**: Fixed broken `isOfflineMode()` function (was always returning false)
+- **CLI options**: Fixed `--current-dir` flag syntax (was using incorrect period prefix)
+- **Race condition**: Fixed directory existence check in fast-generator (now checks before creating)
+- **Compatibility logic**: Simplified and fixed dependency compatibility checking
+
+#### Testing
+- **Added 13 tests**: Dependencies compatibility and quality gate tests
+- **Test count**: 95 → 108 tests
+
+### Documentation
+- **README redesign**: Complete redesign with modern layout and comprehensive feature list
+- **Philosophy section**: Added design philosophy documentation
+
+## [1.14.4] - 2026-05-12
+
+### Added
+
+#### Competitor Parity
+- **Zero config mode**: `--defaults` flag for instant project creation
+- **Current directory**: `--current-dir` flag to scaffold in current directory
+- **Package manager**: `--pkg` option for npm/yarn/pnpm/bun selection
+- **Offline mode**: Local template cache for offline usage
+- **Empty mode**: `--empty` flag for minimal project without DB/Auth/UI
+- **Preference reset**: `--reset-prefs` flag to clear saved preferences
+- **Monorepo support**: Auto-detect pnpm/turborepo/nx/lerna workspaces
+- **Design philosophy**: PHILOSOPHY.md with core principles
+
+## [1.14.3] - 2026-05-12
+
+### Added
+
+#### Template Version Management
+- **Version tracking**: Templates now have version numbers
+- **Search**: Search templates by name, description, or tags
+- **Tags**: Categorize templates with tags
+- **Last updated**: Track when templates were last updated
+
+#### Project Migration
+- **Migrate command**: `codescaffold migrate` to migrate existing projects
+- **Auto-detection**: Detect source project type (Next.js, Express, Python, Go)
+- **Dry run**: `--dry` flag to preview migration without changes
+- **File selection**: Smart file copying based on target framework
+
+## [1.14.2] - 2026-05-12
+
+### Added
+
+#### Smart Features
+- **Dependency resolution**: NextAuth/Clerk only work with Next.js
+- **Compatibility check**: Prevent incompatible component combinations
+- **Real-time preview**: Show project structure during selection
+- **AI recommendations**: Recommend components based on framework
+- **Quality gate**: Auto-check generated code quality
+
 ## [1.14.1] - 2026-05-12
 
 ### Fixed
