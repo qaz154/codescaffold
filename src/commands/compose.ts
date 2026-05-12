@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
 import chalk from 'chalk';
+import path from 'path';
 import { handleCLIError } from '../utils/errors';
 import { ComponentCategory, ComponentOption, ProjectConfig, frameworks, databases, auth, ui } from '../components';
 import { loadPreferences, updatePreferences } from '../utils/preferences';
@@ -9,8 +10,12 @@ import { printProjectPreview } from '../components/preview';
 interface ComposeOptions {
   name?: string;
   minimal?: boolean;
+  empty?: boolean;
   yes?: boolean;
+  defaults?: boolean;
   output?: string;
+  pkg?: string;
+  currentDir?: boolean;
 }
 
 export async function composeCommand(options: ComposeOptions): Promise<void> {
@@ -50,56 +55,74 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
   const prefs = loadPreferences();
   let name = options.name;
 
+  // 当前目录模式
+  if (options.currentDir) {
+    name = path.basename(process.cwd());
+  }
+
   if (!name) {
-    const answer = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'name',
-        message: '项目名称:',
-        default: 'my-project',
-        validate: (input) => /^[a-zA-Z0-9_-]+$/.test(input) || '项目名称只能包含字母、数字、下划线和连字符',
-      },
-    ]);
-    name = answer.name;
+    // defaults 模式使用默认名称
+    if (options.defaults) {
+      name = 'my-project';
+    } else {
+      const answer = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'name',
+          message: '项目名称:',
+          default: 'my-project',
+          validate: (input) => /^[a-zA-Z0-9_-]+$/.test(input) || '项目名称只能包含字母、数字、下划线和连字符',
+        },
+      ]);
+      name = answer.name;
+    }
   }
 
-  const framework = await selectComponent(frameworks, prefs.lastFramework);
-  if (!framework) {
-    throw new Error('必须选择一个框架');
-  }
-
+  // defaults 模式使用默认组件
+  let framework: ComponentOption;
   let database: ComponentOption | null = null;
   let authOption: ComponentOption | null = null;
   let uiOption: ComponentOption | null = null;
 
-  if (!options.minimal) {
-    // 使用推荐组件
-    database = await selectComponent(databases, prefs.lastDatabase, framework.id);
-    authOption = await selectComponent(auth, prefs.lastAuth, framework.id);
-    uiOption = await selectComponent(ui, prefs.lastUi, framework.id);
+  if (options.defaults) {
+    framework = frameworks.options[0]; // Next.js App Router
+    database = databases.options[0]; // Prisma PostgreSQL
+    authOption = auth.options[0]; // NextAuth
+    uiOption = ui.options[0]; // Tailwind + shadcn
+  } else {
+    framework = (await selectComponent(frameworks, prefs.lastFramework))!;
+    if (!framework) {
+      throw new Error('必须选择一个框架');
+    }
 
-    // 兼容性检查
-    const compatibility = checkCompatibility(
-      framework.id,
-      database?.id || null,
-      authOption?.id || null,
-      uiOption?.id || null
-    );
+    if (!options.minimal && !options.empty) {
+      database = await selectComponent(databases, prefs.lastDatabase, framework.id);
+      authOption = await selectComponent(auth, prefs.lastAuth, framework.id);
+      uiOption = await selectComponent(ui, prefs.lastUi, framework.id);
 
-    printCompatibilityResult(compatibility);
+      // 兼容性检查
+      const compatibility = checkCompatibility(
+        framework.id,
+        database?.id || null,
+        authOption?.id || null,
+        uiOption?.id || null
+      );
 
-    if (!compatibility.compatible) {
-      const { proceed } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'proceed',
-          message: '存在兼容性问题，是否继续？',
-          default: false,
-        },
-      ]);
+      printCompatibilityResult(compatibility);
 
-      if (!proceed) {
-        throw new Error('用户取消');
+      if (!compatibility.compatible) {
+        const { proceed } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'proceed',
+            message: '存在兼容性问题，是否继续？',
+            default: false,
+          },
+        ]);
+
+        if (!proceed) {
+          throw new Error('用户取消');
+        }
       }
     }
   }

@@ -117,6 +117,8 @@ program
   .description('Create or manage CodeScaffold configuration')
   .option('--init', 'Create default config file in current directory')
   .option('--show', 'Show current configuration')
+  .option('--reset-prefs', 'Reset user preferences')
+  .option('--clear-cache', 'Clear offline cache')
   .action(async (options) => {
     const { configCommand } = await import('../commands/config');
     await configCommand(options);
@@ -155,7 +157,11 @@ program
   .description('使用组件化方式创建项目')
   .option('-n, --name <name>', '项目名称')
   .option('--minimal', '最小化模式（仅选择框架）')
-  .option('--yes', '使用默认配置')
+  .option('--empty', '空模式（无数据库、认证、UI）')
+  .option('--defaults', '零配置模式（使用推荐默认值）')
+  .option('--yes', '使用默认配置，跳过确认')
+  .option('--pkg <manager>', '包管理器 (npm/yarn/pnpm/bun)')
+  .option('. --current-dir', '在当前目录创建项目')
   .option('-o, --output <path>', '输出目录', '.')
   .action(async (options) => {
     const { composeCommand } = await import('../commands/compose');
