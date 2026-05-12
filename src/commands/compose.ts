@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import { handleCLIError } from '../utils/errors';
 import { ComponentCategory, ComponentOption, ProjectConfig, frameworks, databases, auth, ui } from '../components';
 import { loadPreferences, updatePreferences } from '../utils/preferences';
+import { checkCompatibility, printCompatibilityResult, getRecommendedComponents } from '../components/dependencies';
+import { printProjectPreview } from '../components/preview';
 
 interface ComposeOptions {
   name?: string;
@@ -17,6 +19,7 @@ export async function composeCommand(options: ComposeOptions): Promise<void> {
 
     const config = await buildConfig(options);
     displayConfig(config);
+    printProjectPreview(config);
 
     // --yes 模式跳过确认
     if (!options.yes) {
@@ -70,9 +73,35 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
   let uiOption: ComponentOption | null = null;
 
   if (!options.minimal) {
-    database = await selectComponent(databases, prefs.lastDatabase);
-    authOption = await selectComponent(auth, prefs.lastAuth);
-    uiOption = await selectComponent(ui, prefs.lastUi);
+    // 使用推荐组件
+    database = await selectComponent(databases, prefs.lastDatabase, framework.id);
+    authOption = await selectComponent(auth, prefs.lastAuth, framework.id);
+    uiOption = await selectComponent(ui, prefs.lastUi, framework.id);
+
+    // 兼容性检查
+    const compatibility = checkCompatibility(
+      framework.id,
+      database?.id || null,
+      authOption?.id || null,
+      uiOption?.id || null
+    );
+
+    printCompatibilityResult(compatibility);
+
+    if (!compatibility.compatible) {
+      const { proceed } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'proceed',
+          message: '存在兼容性问题，是否继续？',
+          default: false,
+        },
+      ]);
+
+      if (!proceed) {
+        throw new Error('用户取消');
+      }
+    }
   }
 
   // 保存偏好
@@ -93,14 +122,26 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
   };
 }
 
-async function selectComponent(category: ComponentCategory, lastChoice?: string): Promise<ComponentOption | null> {
-  const choices = [
-    ...category.options.map((opt) => ({
-      name: `${opt.name} - ${opt.description}`,
-      value: opt,
-    })),
-    ...(category.required ? [] : [{ name: '跳过', value: null }]),
-  ];
+async function selectComponent(
+  category: ComponentCategory,
+  lastChoice?: string,
+  framework?: string
+): Promise<ComponentOption | null> {
+  // 获取推荐组件
+  const recommendations = framework ? getRecommendedComponents(framework) : null;
+  const recommendedIds = recommendations?.[category.id as keyof typeof recommendations] || [];
+
+  const choices: Array<{ name: string; value: ComponentOption | null }> = category.options.map((opt) => {
+    const isRecommended = recommendedIds.includes(opt.id);
+    const name = isRecommended
+      ? `${opt.name} - ${opt.description} ${chalk.green('(推荐)')}`
+      : `${opt.name} - ${opt.description}`;
+    return { name, value: opt };
+  });
+
+  if (!category.required) {
+    choices.push({ name: '跳过', value: null });
+  }
 
   const defaultIndex = lastChoice
     ? choices.findIndex((c) => c.value && c.value.id === lastChoice)
