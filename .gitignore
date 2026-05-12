@@ -44,3 +44,4 @@ generated/
 
 # Lock files (keep package-lock for npm)
 # package-lock.json
+.npmrc

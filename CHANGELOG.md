@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.4] - 2026-05-12
 
+### Changed
+- Package renamed to `@qaz154/codescaffold` (npm naming conflict resolution)
+
 ### Fixed
 - **express-api template**: Added missing `express-rate-limit` dependency
 - **express-api template**: Fixed JWT token generation type error

@@ -1,7 +1,7 @@
 # CodeScaffold
 
-![npm version](https://img.shields.io/npm/v/codescaffold)
-![License](https://img.shields.io/npm/l/codescaffold)
+![npm version](https://img.shields.io/npm/v/@qaz154/codescaffold)
+![License](https://img.shields.io/npm/l/@qaz154/codescaffold)
 
 **AI-Powered Full-Stack Project Scaffold Generator**
 
@@ -39,7 +39,7 @@ Generate production-ready project scaffolds in seconds. CodeScaffold takes your 
 
 ```bash
 # Install globally
-npm install -g codescaffold
+npm install -g @qaz154/codescaffold
 
 # Quick start with preset
 codescaffold presets
