@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-05-12
+
+### Added
+
+#### 组件化架构 (v1.14 路线图 - 第 1 周)
+- **新增 `compose` 命令**: 使用组件化方式创建项目
+- **组件系统**: 框架 + 数据库 + 认证 + UI 自由组合
+- **5 个框架选项**: Next.js (App/Pages), Express API, FastAPI, Go Gin
+- **5 个数据库选项**: Prisma (PG/SQLite), Drizzle (PG/SQLite), 无
+- **4 个认证选项**: NextAuth.js, JWT, Clerk, 无
+- **5 个 UI 选项**: Tailwind + shadcn, Tailwind, MUI, Ant Design, 无
+- **交互式选择**: 逐步引导用户选择组件
+- **--minimal 模式**: 仅选择框架
+- **--yes 模式**: 使用默认配置
+
+### v1.14 路线图启动
+- 目标: 14 周迭代到 v1.14 终极版
+- 主题: 集大成 + 创新
+- 本次: 模块化组件系统
+
 ## [1.0.5] - 2026-05-12
 
 ### Fixed

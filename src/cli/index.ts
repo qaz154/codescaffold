@@ -150,6 +150,18 @@ program
     await upgradeCommand(options);
   });
 
+program
+  .command('compose')
+  .description('使用组件化方式创建项目')
+  .option('-n, --name <name>', '项目名称')
+  .option('--minimal', '最小化模式（仅选择框架）')
+  .option('--yes', '使用默认配置')
+  .option('-o, --output <path>', '输出目录', '.')
+  .action(async (options) => {
+    const { composeCommand } = await import('../commands/compose');
+    await composeCommand(options);
+  });
+
 async function main(): Promise<void> {
   showBanner();
   showSystemInfo();

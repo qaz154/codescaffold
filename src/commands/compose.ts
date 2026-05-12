@@ -1,0 +1,139 @@
+import inquirer from 'inquirer';
+import chalk from 'chalk';
+import { handleCLIError } from '../utils/errors';
+import { ComponentCategory, ComponentOption, ProjectConfig, frameworks, databases, auth, ui } from '../components';
+
+interface ComposeOptions {
+  name?: string;
+  minimal?: boolean;
+  yes?: boolean;
+  output?: string;
+}
+
+export async function composeCommand(options: ComposeOptions): Promise<void> {
+  try {
+    console.log(chalk.cyan('\n📦 CodeScaffold 组件化创建\n'));
+
+    const config = await buildConfig(options);
+    displayConfig(config);
+
+    const { confirm } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: '确认创建项目？',
+        default: true,
+      },
+    ]);
+
+    if (!confirm) {
+      console.log(chalk.gray('已取消'));
+      return;
+    }
+
+    await generateProject(config, options);
+
+  } catch (error) {
+    handleCLIError(error);
+    process.exit(1);
+  }
+}
+
+async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
+  let name = options.name;
+
+  if (!name) {
+    const answer = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: '项目名称:',
+        default: 'my-project',
+        validate: (input) => /^[a-zA-Z0-9_-]+$/.test(input) || '项目名称只能包含字母、数字、下划线和连字符',
+      },
+    ]);
+    name = answer.name;
+  }
+
+  const framework = await selectComponent(frameworks);
+  if (!framework) {
+    throw new Error('必须选择一个框架');
+  }
+
+  let database: ComponentOption | null = null;
+  let authOption: ComponentOption | null = null;
+  let uiOption: ComponentOption | null = null;
+
+  if (!options.minimal) {
+    database = await selectComponent(databases);
+    authOption = await selectComponent(auth);
+    uiOption = await selectComponent(ui);
+  }
+
+  return {
+    name: name || 'my-project',
+    framework,
+    database,
+    auth: authOption,
+    ui: uiOption,
+    features: [],
+  };
+}
+
+async function selectComponent(category: ComponentCategory): Promise<ComponentOption | null> {
+  const choices = [
+    ...category.options.map((opt) => ({
+      name: `${opt.name} - ${opt.description}`,
+      value: opt,
+    })),
+    ...(category.required ? [] : [{ name: '跳过', value: null }]),
+  ];
+
+  const answer = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'selected',
+      message: `选择${category.name}:`,
+      choices,
+    },
+  ]);
+
+  return answer.selected;
+}
+
+function displayConfig(config: ProjectConfig): void {
+  console.log(chalk.cyan('\n📋 项目配置:\n'));
+  console.log(`  ${chalk.bold('名称:')} ${config.name}`);
+  console.log(`  ${chalk.bold('框架:')} ${chalk.green(config.framework.name)}`);
+
+  if (config.database) {
+    console.log(`  ${chalk.bold('数据库:')} ${chalk.green(config.database.name)}`);
+  }
+
+  if (config.auth) {
+    console.log(`  ${chalk.bold('认证:')} ${chalk.green(config.auth.name)}`);
+  }
+
+  if (config.ui) {
+    console.log(`  ${chalk.bold('UI:')} ${chalk.green(config.ui.name)}`);
+  }
+}
+
+async function generateProject(config: ProjectConfig, options: ComposeOptions): Promise<void> {
+  const { fastGenerate } = await import('../template/fast-generator');
+
+  const projectPath = await fastGenerate({
+    name: config.name,
+    framework: config.framework.id,
+    database: config.database?.id || 'none',
+    auth: config.auth?.id || 'none',
+    ui: config.ui?.id || 'none',
+    output: options.output || '.',
+  });
+
+  console.log(chalk.green(`\n✅ 项目创建成功: ${projectPath}\n`));
+  console.log(chalk.gray('下一步:'));
+  console.log(chalk.gray(`  cd ${config.name}`));
+  console.log(chalk.gray('  npm install'));
+  console.log(chalk.gray('  npm run dev'));
+}
