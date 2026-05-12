@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.13] - 2026-05-12
+
+### Added
+
+#### 部署集成 (v1.14 路线图 - 第 8 周)
+- **部署组件**: 4 个部署平台选项
+- **Vercel**: Next.js 官方部署平台
+- **Netlify**: 静态站点部署平台
+- **Fly.io**: 容器化部署平台
+- **Docker**: 容器化部署配置
+
+### v1.14 路线图 - 第 8 周
+- 一键部署到云
+- 部署配置生成
+
 ## [1.0.12] - 2026-05-12
 
 ### Added
