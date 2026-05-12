@@ -5,6 +5,86 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-05-12
+
+### 🎉 v1.14 终极版 - 集大成
+
+**14 个版本迭代，从基础到终极**
+
+### ✨ 核心功能
+
+#### 模块化组件系统 (v1.0.6)
+- `compose` 命令 - 组件化创建项目
+- 5 个框架: Next.js, Express, FastAPI, Go Gin
+- 5 个数据库: Prisma, Drizzle, 无
+- 4 个认证: NextAuth, JWT, Clerk, 无
+- 5 个 UI: Tailwind + shadcn, MUI, Ant Design, 无
+
+#### 速度优化 (v1.0.7)
+- 性能监控工具
+- 快速生成器
+- 目标: < 3 秒初始化
+
+#### 社区模板系统 (v1.0.8)
+- `template` 命令 - 管理社区模板
+- GitHub 模板集成
+- 本地模板注册表
+
+#### DX 优化 (v1.0.9)
+- 偏好记忆系统
+- 智能默认值
+- 偏好管理和重置
+
+#### 多运行时支持 (v1.0.10)
+- Node.js/Bun/Deno 自动检测
+- 运行时命令适配
+
+#### AI 智能代码生成 (v1.0.11)
+- 智能分析和建议
+- 框架/数据库感知推荐
+- 智能 README 生成
+
+#### 测试集成 (v1.0.12)
+- Vitest/Jest/Playwright/Cypress 支持
+- 测试配置生成
+
+#### 部署集成 (v1.0.13)
+- Vercel/Netlify/Fly.io/Docker 支持
+- 部署配置生成
+
+### 🚀 新增命令
+
+| 命令 | 说明 |
+|------|------|
+| `compose` | 组件化创建项目 |
+| `template` | 管理社区模板 |
+| `config --show` | 查看偏好设置 |
+| `config --reset-prefs` | 重置偏好 |
+
+### 📊 技术指标
+
+- 初始化速度: < 3 秒
+- 框架支持: 5 个
+- 数据库支持: 5 个
+- 认证方式: 4 个
+- UI 框架: 5 个
+- 测试框架: 4 个
+- 部署平台: 4 个
+
+### 🎯 与竞品对比
+
+| 特性 | create-vite | create-next-app | create-t3-app | CodeScaffold v1.14 |
+|------|-------------|-----------------|---------------|-------------------|
+| AI 代码生成 | ❌ | ❌ | ❌ | ✅ |
+| 多框架 | ✅ | ❌ | ❌ | ✅ |
+| 离线支持 | ✅ | ✅ | ❌ | ✅ |
+| 组件化 | ❌ | ❌ | ✅ | ✅ |
+| 偏好记忆 | ❌ | ✅ | ❌ | ✅ |
+| 社区模板 | ✅ | ❌ | ❌ | ✅ |
+| 多运行时 | ✅ | ❌ | ❌ | ✅ |
+
+---
+
 ## [1.0.13] - 2026-05-12
 
 ### Added
