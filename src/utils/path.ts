@@ -12,16 +12,15 @@ export function validateOutputPath(outputPath: string): string {
   // Resolve to absolute path
   const resolvedPath = path.resolve(outputPath);
 
-  // Check for path traversal attempts
-  if (outputPath.includes('..') || resolvedPath.includes('..')) {
+  // Check for path traversal in original input
+  if (outputPath.includes('..')) {
     throw new PathValidationError('Path traversal is not allowed');
   }
 
   // Get current working directory
   const cwd = process.cwd();
 
-  // Check if the path is within the current working directory or a subdirectory
-  // This allows relative paths like './output' to work in any environment
+  // Normalize paths for cross-platform comparison
   const normalizedPath = resolvedPath.toLowerCase().replace(/\\/g, '/');
   const normalizedCwd = cwd.toLowerCase().replace(/\\/g, '/');
 
@@ -30,8 +29,9 @@ export function validateOutputPath(outputPath: string): string {
     return resolvedPath;
   }
 
-  // Check for dangerous system paths (only block true system directories)
+  // Dangerous system paths (Unix + Windows)
   const dangerousPaths = [
+    // Unix
     '/',
     '/bin',
     '/etc',
@@ -48,6 +48,18 @@ export function validateOutputPath(outputPath: string): string {
     '/mnt',
     '/opt',
     '/srv',
+    '/tmp',
+    // Windows
+    'c:/windows',
+    'c:/windows/system32',
+    'c:/program files',
+    'c:/program files (x86)',
+    'c:/users/default',
+    'c:/programdata',
+    // macOS
+    '/system',
+    '/library',
+    '/applications',
   ];
 
   for (const dangerous of dangerousPaths) {
@@ -56,7 +68,7 @@ export function validateOutputPath(outputPath: string): string {
     }
   }
 
-  // Check if path exists and is not empty (if it exists)
+  // Check if path exists
   if (fs.existsSync(resolvedPath)) {
     const stat = fs.statSync(resolvedPath);
     if (!stat.isDirectory()) {

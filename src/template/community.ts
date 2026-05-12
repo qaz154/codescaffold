@@ -68,6 +68,16 @@ export async function fetchTemplateFromGitHub(source: string): Promise<Community
   }
 
   const [owner, repo] = parts;
+
+  // Validate GitHub naming rules
+  const githubNameRegex = /^[a-zA-Z0-9._-]+$/;
+  if (!githubNameRegex.test(owner) || owner.length < 1) {
+    throw new Error('无效的 GitHub 用户名格式');
+  }
+  if (!githubNameRegex.test(repo) || repo.length < 1) {
+    throw new Error('无效的 GitHub 仓库名格式');
+  }
+
   const name = repo.replace('.git', '');
 
   return {

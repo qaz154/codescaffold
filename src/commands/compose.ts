@@ -18,18 +18,21 @@ export async function composeCommand(options: ComposeOptions): Promise<void> {
     const config = await buildConfig(options);
     displayConfig(config);
 
-    const { confirm } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'confirm',
-        message: '确认创建项目？',
-        default: true,
-      },
-    ]);
+    // --yes 模式跳过确认
+    if (!options.yes) {
+      const { confirm } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message: '确认创建项目？',
+          default: true,
+        },
+      ]);
 
-    if (!confirm) {
-      console.log(chalk.gray('已取消'));
-      return;
+      if (!confirm) {
+        console.log(chalk.gray('已取消'));
+        return;
+      }
     }
 
     await generateProject(config, options);

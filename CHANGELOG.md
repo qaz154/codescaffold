@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.1] - 2026-05-12
+
+### Fixed
+
+#### 安全修复
+- **路径遍历验证**: 添加 Windows 系统路径检查
+- **GitHub 模板验证**: 添加用户名和仓库名格式验证
+
+#### 功能修复
+- **FastAPI/Go 支持**: 正确生成 pyproject.toml 和 go.mod
+- **--yes 标志**: 现在可以跳过确认提示
+- **目录覆盖检查**: 添加 --force 参数支持
+- **性能监控**: 修复 perf.ts 时间戳比较问题
+
+#### 测试
+- **新增 30 个测试**: 组件、智能生成器、社区模板、性能工具
+- **测试覆盖率**: 从 65 提升到 95 个测试
+
 ## [1.14.0] - 2026-05-12
 
 ### 🎉 v1.14 终极版 - 集大成

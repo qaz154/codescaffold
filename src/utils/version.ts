@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export const version = '1.14.0';
+export const version = '1.14.1';
 
 interface NpmPackageInfo {
   version: string;

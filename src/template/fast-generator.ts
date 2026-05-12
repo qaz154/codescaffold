@@ -17,17 +17,45 @@ export async function fastGenerate(options: FastGenerateOptions): Promise<string
     fs.mkdirSync(projectPath, { recursive: true });
   }
 
-  const packageJson = generatePackageJson(options);
-  fs.writeFileSync(
-    path.join(projectPath, 'package.json'),
-    JSON.stringify(packageJson, null, 2)
-  );
+  // 检查是否已存在目录且无 --force
+  if (fs.existsSync(projectPath) && fs.readdirSync(projectPath).length > 0) {
+    throw new Error(`目录已存在: ${projectPath}。使用 --force 覆盖`);
+  }
 
-  const tsConfig = generateTsConfig(options);
-  fs.writeFileSync(
-    path.join(projectPath, 'tsconfig.json'),
-    JSON.stringify(tsConfig, null, 2)
-  );
+  const packageJson = generatePackageJson(options);
+
+  // Python 和 Go 不生成 package.json
+  if (packageJson !== null) {
+    fs.writeFileSync(
+      path.join(projectPath, 'package.json'),
+      JSON.stringify(packageJson, null, 2)
+    );
+  }
+
+  // Python 生成 pyproject.toml
+  if (options.framework === 'fastapi') {
+    fs.writeFileSync(
+      path.join(projectPath, 'pyproject.toml'),
+      generatePyprojectToml()
+    );
+  }
+
+  // Go 生成 go.mod
+  if (options.framework === 'go-gin') {
+    fs.writeFileSync(
+      path.join(projectPath, 'go.mod'),
+      generateGoMod(options.name)
+    );
+  }
+
+  // TypeScript 项目生成 tsconfig.json
+  if (options.framework !== 'fastapi' && options.framework !== 'go-gin') {
+    const tsConfig = generateTsConfig(options);
+    fs.writeFileSync(
+      path.join(projectPath, 'tsconfig.json'),
+      JSON.stringify(tsConfig, null, 2)
+    );
+  }
 
   fs.writeFileSync(
     path.join(projectPath, '.gitignore'),
@@ -66,6 +94,12 @@ function generatePackageJson(options: FastGenerateOptions) {
     devDeps['@types/express'] = '^4.17.21';
     devDeps['typescript'] = '^5.6.0';
     devDeps['tsx'] = '^4.19.0';
+  } else if (options.framework === 'fastapi') {
+    // Python - 不生成 package.json，生成 pyproject.toml
+    return null;
+  } else if (options.framework === 'go-gin') {
+    // Go - 不生成 package.json，生成 go.mod
+    return null;
   }
 
   // 数据库
@@ -157,6 +191,35 @@ dist/
 .env.local
 *.log
 .DS_Store
+`;
+}
+
+function generatePyprojectToml(): string {
+  return `[project]
+name = "my-project"
+version = "0.1.0"
+description = "Created with CodeScaffold"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+`;
+}
+
+function generateGoMod(name: string): string {
+  return `module ${name}
+
+go 1.22
+
+require github.com/gin-gonic/gin v1.10.0
 `;
 }
 
