@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import chalk from 'chalk';
 
 const CACHE_DIR = path.join(
@@ -9,11 +10,8 @@ const CACHE_DIR = path.join(
 );
 
 export function isOfflineMode(): boolean {
-  // 检查网络连接
   try {
-    require('dns').lookup('registry.npmjs.org', (err: Error | null) => {
-      if (err) throw err;
-    });
+    execSync('ping -n 1 registry.npmjs.org', { timeout: 3000 });
     return false;
   } catch {
     return true;

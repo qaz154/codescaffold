@@ -13,13 +13,14 @@ export interface FastGenerateOptions {
 export async function fastGenerate(options: FastGenerateOptions): Promise<string> {
   const projectPath = path.join(options.output, options.name);
 
-  if (!fs.existsSync(projectPath)) {
-    fs.mkdirSync(projectPath, { recursive: true });
-  }
-
-  // 检查是否已存在目录且无 --force
+  // 先检查目录是否存在
   if (fs.existsSync(projectPath) && fs.readdirSync(projectPath).length > 0) {
     throw new Error(`目录已存在: ${projectPath}。使用 --force 覆盖`);
+  }
+
+  // 创建目录
+  if (!fs.existsSync(projectPath)) {
+    fs.mkdirSync(projectPath, { recursive: true });
   }
 
   const packageJson = generatePackageJson(options);

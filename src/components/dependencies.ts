@@ -112,12 +112,30 @@ export function checkCompatibility(
   for (const component of components) {
     const rules = DEPENDENCY_RULES.filter((r) => r.source === component);
 
-    for (const rule of rules) {
-      if (rule.type === 'requires' && framework !== rule.target) {
+    // 分组检查：requires 规则需要 framework 匹配至少一个 target
+    const requiresRules = rules.filter((r) => r.type === 'requires');
+    const incompatibleRules = rules.filter((r) => r.type === 'incompatible');
+    const optionalRules = rules.filter((r) => r.type === 'optional');
+
+    // requires: framework 必须匹配至少一个 target
+    if (requiresRules.length > 0) {
+      const hasMatch = requiresRules.some((r) => framework === r.target);
+      if (!hasMatch) {
+        // 添加第一个 requires 规则作为错误
+        errors.push(requiresRules[0]);
+      }
+    }
+
+    // incompatible: framework 不能匹配任何 target
+    for (const rule of incompatibleRules) {
+      if (framework === rule.target) {
         errors.push(rule);
-      } else if (rule.type === 'incompatible' && framework === rule.target) {
-        errors.push(rule);
-      } else if (rule.type === 'optional' && framework !== rule.target) {
+      }
+    }
+
+    // optional: framework 不匹配时添加警告
+    for (const rule of optionalRules) {
+      if (framework !== rule.target) {
         warnings.push(rule);
       }
     }

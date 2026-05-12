@@ -1,6 +1,6 @@
 {
   "name": "@qaz154/codescaffold",
-  "version": "1.14.4",
+  "version": "1.14.5",
   "description": "AI-Powered Full-Stack Project Scaffold Generator",
   "main": "dist/cli/index.js",
   "bin": {

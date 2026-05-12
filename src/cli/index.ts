@@ -161,7 +161,7 @@ program
   .option('--defaults', '零配置模式（使用推荐默认值）')
   .option('--yes', '使用默认配置，跳过确认')
   .option('--pkg <manager>', '包管理器 (npm/yarn/pnpm/bun)')
-  .option('. --current-dir', '在当前目录创建项目')
+  .option('--current-dir', '在当前目录创建项目')
   .option('-o, --output <path>', '输出目录', '.')
   .action(async (options) => {
     const { composeCommand } = await import('../commands/compose');
