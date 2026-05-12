@@ -168,9 +168,23 @@ program
   .option('-l, --list', '列出所有模板')
   .option('-a, --add <source>', '添加模板 (github:user/repo)')
   .option('-r, --remove <name>', '移除模板')
+  .option('-s, --search <query>', '搜索模板')
+  .option('-v, --version <name>', '查看模板版本')
   .action(async (options) => {
     const { templateCommand } = await import('../commands/template');
     await templateCommand(options);
+  });
+
+program
+  .command('migrate')
+  .description('从现有项目迁移到新架构')
+  .option('-s, --source <path>', '源项目路径', '.')
+  .option('-t, --target <path>', '目标路径')
+  .option('-f, --framework <name>', '目标框架')
+  .option('--dry', '仅预览，不实际迁移')
+  .action(async (options) => {
+    const { migrateCommand } = await import('../commands/migrate');
+    await migrateCommand(options);
   });
 
 async function main(): Promise<void> {

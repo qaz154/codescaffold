@@ -6,6 +6,15 @@ export interface CommunityTemplate {
   name: string;
   source: string;
   description: string;
+  version: string;
+  lastUpdated: string;
+  tags: string[];
+}
+
+export interface TemplateVersion {
+  version: string;
+  date: string;
+  changes: string[];
 }
 
 const TEMPLATE_REGISTRY_PATH = path.join(
@@ -45,7 +54,7 @@ export function addCommunityTemplate(template: CommunityTemplate): void {
   }
 
   saveCommunityTemplates(templates);
-  console.log(chalk.green(`✓ 模板 "${template.name}" 已添加`));
+  console.log(chalk.green(`✓ 模板 "${template.name}" v${template.version} 已添加`));
 }
 
 export function removeCommunityTemplate(name: string): boolean {
@@ -59,6 +68,52 @@ export function removeCommunityTemplate(name: string): boolean {
   saveCommunityTemplates(filtered);
   console.log(chalk.green(`✓ 模板 "${name}" 已移除`));
   return true;
+}
+
+export function updateTemplateVersion(name: string, version: string, changes: string[]): boolean {
+  const templates = loadCommunityTemplates();
+  const template = templates.find((t) => t.name === name);
+
+  if (!template) {
+    return false;
+  }
+
+  template.version = version;
+  template.lastUpdated = new Date().toISOString().split('T')[0];
+
+  saveCommunityTemplates(templates);
+  console.log(chalk.green(`✓ 模板 "${name}" 已更新到 v${version}`));
+  return true;
+}
+
+export function getTemplateVersions(name: string): TemplateVersion[] {
+  const templates = loadCommunityTemplates();
+  const template = templates.find((t) => t.name === name);
+
+  if (!template) {
+    return [];
+  }
+
+  // 从模板信息中提取版本历史（简化版本）
+  return [
+    {
+      version: template.version,
+      date: template.lastUpdated,
+      changes: ['当前版本'],
+    },
+  ];
+}
+
+export function searchTemplates(query: string): CommunityTemplate[] {
+  const templates = loadCommunityTemplates();
+  const lowerQuery = query.toLowerCase();
+
+  return templates.filter(
+    (t) =>
+      t.name.toLowerCase().includes(lowerQuery) ||
+      t.description.toLowerCase().includes(lowerQuery) ||
+      t.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
+  );
 }
 
 export async function fetchTemplateFromGitHub(source: string): Promise<CommunityTemplate> {
@@ -84,6 +139,9 @@ export async function fetchTemplateFromGitHub(source: string): Promise<Community
     name,
     source: `https://github.com/${owner}/${repo}.git`,
     description: `GitHub 模板: ${owner}/${repo}`,
+    version: '1.0.0',
+    lastUpdated: new Date().toISOString().split('T')[0],
+    tags: [],
   };
 }
 
@@ -97,8 +155,11 @@ export function listCommunityTemplates(): CommunityTemplate[] {
   } else {
     console.log(chalk.cyan('\n📦 社区模板:\n'));
     for (const t of templates) {
-      console.log(`  ${chalk.bold(t.name)} - ${t.description}`);
+      console.log(`  ${chalk.bold(t.name)} ${chalk.cyan(`v${t.version}`)} - ${t.description}`);
       console.log(`  ${chalk.dim(t.source)}`);
+      if (t.tags.length > 0) {
+        console.log(`  ${chalk.dim('标签: ' + t.tags.join(', '))}`);
+      }
     }
   }
 
