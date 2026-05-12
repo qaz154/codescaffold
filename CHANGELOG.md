@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-05-12
+
+### Added
+
+#### 速度优化 (v1.14 路线图 - 第 2 周)
+- **性能监控**: 内置性能计时工具
+- **快速生成器**: 优化的项目生成流程
+- **目标**: 初始化速度 < 3 秒
+
+### v1.14 路线图 - 第 2 周
+- 优化项目生成速度
+- 添加性能监控
+
 ## [1.0.6] - 2026-05-12
 
 ### Added
