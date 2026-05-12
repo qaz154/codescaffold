@@ -17,7 +17,20 @@ export function validateOutputPath(outputPath: string): string {
     throw new PathValidationError('Path traversal is not allowed');
   }
 
-  // Check for dangerous paths
+  // Get current working directory
+  const cwd = process.cwd();
+
+  // Check if the path is within the current working directory or a subdirectory
+  // This allows relative paths like './output' to work in any environment
+  const normalizedPath = resolvedPath.toLowerCase().replace(/\\/g, '/');
+  const normalizedCwd = cwd.toLowerCase().replace(/\\/g, '/');
+
+  // Allow paths within current working directory
+  if (normalizedPath.startsWith(normalizedCwd) || normalizedPath.startsWith(normalizedCwd + '/')) {
+    return resolvedPath;
+  }
+
+  // Check for dangerous system paths (only block true system directories)
   const dangerousPaths = [
     '/',
     '/bin',
@@ -32,14 +45,11 @@ export function validateOutputPath(outputPath: string): string {
     '/lib64',
     '/sbin',
     '/root',
-    '/home',
     '/mnt',
     '/opt',
     '/srv',
-    '/tmp',
   ];
 
-  const normalizedPath = resolvedPath.toLowerCase().replace(/\\/g, '/');
   for (const dangerous of dangerousPaths) {
     if (normalizedPath === dangerous || normalizedPath.startsWith(dangerous + '/')) {
       throw new PathValidationError(`Cannot write to protected system directory: ${dangerous}`);
