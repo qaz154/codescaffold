@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.10] - 2026-05-12
+
+### Added
+
+#### 多运行时支持 (v1.14 路线图 - 第 5 周)
+- **运行时检测**: 自动检测 Node.js/Bun/Deno
+- **Bun 支持**: 使用 bun install 和 bun run
+- **Deno 支持**: 使用 deno install 和 deno task
+- **运行时信息**: 显示已安装的运行时版本
+
+### v1.14 路线图 - 第 5 周
+- Bun 和 Deno 运行时支持
+- 运行时检测和命令适配
+
 ## [1.0.9] - 2026-05-12
 
 ### Added
