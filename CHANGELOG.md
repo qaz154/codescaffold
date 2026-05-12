@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.11] - 2026-05-12
+
+### Added
+
+#### AI 智能代码生成 (v1.14 路线图 - 第 6 周)
+- **智能分析**: 根据选择的组件推荐功能
+- **智能建议**: 显示推荐功能和置信度
+- **智能 README**: 自动生成包含建议的 README
+- **框架感知**: 根据框架推荐最佳实践
+- **数据库感知**: 推荐迁移和 ORM 使用
+
+### v1.14 路线图 - 第 6 周
+- AI 智能代码生成
+- 智能建议和推荐
+
 ## [1.0.10] - 2026-05-12
 
 ### Added
