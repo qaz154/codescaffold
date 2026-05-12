@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-05-12
+
+### Fixed
+- **express-api template**: Added missing `express-rate-limit` dependency
+- **express-api template**: Fixed JWT token generation type error
+- **nextjs-fullstack template**: Added missing `tailwindcss`, `postcss`, `autoprefixer` dependencies
+- **nextjs-fullstack template**: Added `role` field to User schema
+- **nextjs-fullstack template**: Fixed JWT token generation to include role
+- **README**: Removed fake npm download badge and fixed incorrect CI badge
+
+### Changed
+- README now includes clear problem/solution explanation
+- README now includes comparison with alternatives
+
 ## [1.0.3] - 2026-05-12
 
 ### Added

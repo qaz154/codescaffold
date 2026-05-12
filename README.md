@@ -1,13 +1,30 @@
 # CodeScaffold
 
 ![npm version](https://img.shields.io/npm/v/codescaffold)
-![npm downloads](https://img.shields.io/npm/dm/codescaffold)
 ![License](https://img.shields.io/npm/l/codescaffold)
-![Build Status](https://img.shields.io/github/actions/workflow/status/qclaw/codescaffold/ci.yml)
 
 **AI-Powered Full-Stack Project Scaffold Generator**
 
 Generate production-ready project scaffolds in seconds. CodeScaffold takes your natural language requirements and automatically creates complete project structures with AI-generated custom code.
+
+## What Problem Does This Solve?
+
+| Who | Pain Point | Solution |
+|-----|------------|----------|
+| **Independent Developers** | Spending 1-2 days setting up project structure | Generate complete project in 30 seconds |
+| **Learners** | Don't know best practices | Templates include Auth, RBAC, logging, Docker |
+| **Startups** | Need to validate MVP quickly | Describe requirements → Complete backend |
+| **AI Developers** | Need to test with local LLMs | Built-in Ollama support |
+
+## Comparison with Alternatives
+
+| Feature | create-next-app | CodeScaffold |
+|---------|-----------------|--------------|
+| Generation | Fixed template | AI + Template |
+| Custom code | ❌ Scaffold only | ✅ AI-generated business code |
+| Multiple stacks | ❌ One framework | ✅ Express/Next/FastAPI/Go |
+| Best practices | ❌ Basic structure | ✅ Auth/RBAC/Docker/CI |
+| Multi-model AI | ❌ | ✅ OpenAI/Claude/Ollama |
 
 ## Features
 
@@ -17,23 +34,20 @@ Generate production-ready project scaffolds in seconds. CodeScaffold takes your 
 - **✅ Project Validation**: Validate project structure and security
 - **⬆️ Template Upgrade**: Upgrade existing projects to latest template version
 - **⚙️ Configuration File Support**: `.codescaffoldrc` for project-level settings
-- **🔧 Interactive CLI**: Guided project creation with inquirer prompts
-- **🌐 Web UI**: Visual project wizard with real-time analysis
-- **🚀 Production Ready**: Docker, Docker Compose, GitHub Actions CI
 
 ## Quick Start
 
 ```bash
-# Install
+# Install globally
 npm install -g codescaffold
+
+# Quick start with preset
+codescaffold presets
 
 # Interactive mode
 codescaffold init
 
-# Or use a preset for quick start
-codescaffold presets
-
-# Or use AI to generate custom code
+# Or describe what you need
 codescaffold generate --requirement "User management API with roles and JWT auth"
 ```
 
@@ -76,69 +90,6 @@ codescaffold generate --provider openai --model gpt-4o --requirement "..."
 OLLAMA_BASE_URL=http://localhost:11434/v1 codescaffold generate --provider local --requirement "..."
 ```
 
-## Configuration
-
-Create a `.codescaffoldrc` file in your project or home directory:
-
-```json
-{
-  "provider": "claude",
-  "model": "claude-3-5-sonnet-20241022",
-  "defaultTemplate": "express-api",
-  "defaultOutput": ".",
-  "templates": {
-    "express-api": { "enabled": true },
-    "nextjs-fullstack": { "enabled": true },
-    "python-fastapi": { "enabled": true },
-    "go-microservice": { "enabled": true }
-  }
-}
-```
-
-### Config Command
-
-```bash
-# Create default config in current directory
-codescaffold config --init
-
-# Show current configuration
-codescaffold config --show
-```
-
-## Project Validation
-
-Validate a CodeScaffold-generated project:
-
-```bash
-# Validate current directory
-codescaffold validate
-
-# Validate specific directory
-codescaffold validate --directory ./my-project
-```
-
-Validation checks:
-- Required template files
-- Package/dependency configuration
-- Dockerfile presence
-- README and .gitignore
-- Hardcoded secrets detection
-
-## Template Upgrade
-
-Upgrade an existing project to the latest template version:
-
-```bash
-# Upgrade current directory
-codescaffold upgrade
-
-# Upgrade specific directory
-codescaffold upgrade --directory ./my-project
-
-# Skip backup
-codescaffold upgrade --no-backup
-```
-
 ## Templates
 
 | Template | Language | Best For | Key Features |
@@ -148,53 +99,58 @@ codescaffold upgrade --no-backup
 | `python-fastapi` | Python | ML Backends | Auto OpenAPI Docs, Async, WebSocket Support, Background Tasks |
 | `go-microservice` | Go | Cloud Services | Structured Logging, K8s Health Probes, Graceful Shutdown |
 
-## Usage
-
-### CLI Commands
+## CLI Commands
 
 ```bash
-# Interactive mode
-codescaffold init
-
-# Quick create
-codescaffold create my-project --template express-api
-
-# AI-powered generation with custom code
-codescaffold generate --requirement "User management API with roles and JWT authentication"
-
-# Quick-start presets
+# Quick start with presets
 codescaffold presets
 
-# Validate project
+# Interactive project creation
+codescaffold init
+
+# Quick create from template
+codescaffold create my-project --template express-api
+
+# AI-powered generation
+codescaffold generate --requirement "User management API with JWT auth"
+
+# Validate project structure
 codescaffold validate
 
-# Upgrade template
+# Upgrade project to latest template
 codescaffold upgrade
 
-# List templates
+# List available templates
 codescaffold list
 
-# Template info
+# Show template details
 codescaffold info express-api
 ```
 
-### Web UI
+## Configuration
 
-```bash
-codescaffold serve
-# Open http://localhost:3000
+Create a `.codescaffoldrc` file in your project or home directory:
+
+```json
+{
+  "provider": "claude",
+  "model": "claude-3-5-sonnet-20241022",
+  "defaultTemplate": "express-api"
+}
 ```
 
-### Options
+## Project Validation
 
-| Option | Description |
-|--------|-------------|
-| `-t, --template <name>` | Template to use |
-| `-o, --output <path>` | Output directory |
-| `-f, --force` | Overwrite existing files |
-| `-p, --port <number>` | Port for web UI |
-| `--provider <provider>` | AI provider (openai, claude, local) |
-| `--model <model>` | AI model to use |
+```bash
+codescaffold validate
+```
+
+Checks:
+- Required template files
+- Package/dependency configuration
+- Dockerfile presence
+- README and .gitignore
+- Hardcoded secrets detection
 
 ## Environment Variables
 
@@ -202,44 +158,23 @@ codescaffold serve
 |----------|-------------|
 | `OPENAI_API_KEY` | OpenAI API key |
 | `ANTHROPIC_API_KEY` | Anthropic API key (Claude) |
-| `CLAUDE_API_KEY` | Alternative env var for Claude |
 | `OLLAMA_BASE_URL` | Ollama server URL (default: `http://localhost:11434/v1`) |
 | `DEBUG` | Enable debug logging |
-
-## Architecture
-
-```
-codescaffold
-├── src/
-│   ├── commands/          # CLI command implementations
-│   │   ├── presets.ts    # Project presets command
-│   │   ├── validate.ts   # Project validation
-│   │   └── upgrade.ts    # Template upgrade
-│   ├── generator/         # Project generation orchestration
-│   ├── ai/               # AI analysis and code generation
-│   └── utils/
-│       └── config.ts     # Configuration file support
-├── templates/            # Project templates
-│   ├── express-api/
-│   ├── nextjs-fullstack/
-│   ├── python-fastapi/
-│   └── go-microservice/
-└── web/                 # Web UI (optional)
-```
 
 ## Development
 
 ```bash
+# Clone the repo
+git clone https://github.com/qaz154/codescaffold.git
+cd codescaffold
+
 # Install dependencies
 npm install
 
 # Build
 npm run build
 
-# Run tests
-npm test
-
-# Run CLI locally
+# Run locally
 npm run dev
 
 # Link for global testing
