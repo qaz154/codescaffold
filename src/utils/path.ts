@@ -8,67 +8,49 @@ export class PathValidationError extends ValidationError {
   }
 }
 
-export function validateOutputPath(outputPath: string): string {
-  // Resolve to absolute path
-  const resolvedPath = path.resolve(outputPath);
+const PROTECTED_PREFIXES = [
+  // Unix system paths
+  '/etc', '/sys', '/proc', '/dev', '/boot', '/lib', '/lib64', '/sbin',
+  '/root', '/mnt', '/opt', '/srv', '/run', '/var', '/usr',
+  // Windows system paths (case-insensitive matching applied at runtime)
+  'c:\\windows', 'c:\\program files', 'c:\\program files (x86)', 'c:\\programdata',
+  'c:\\users\\default',
+  // macOS
+  '/system', '/library', '/applications',
+];
 
-  // Check for path traversal in original input
-  if (outputPath.includes('..')) {
+function isProtectedPath(normalizedPath: string): boolean {
+  const lower = normalizedPath.toLowerCase();
+  for (const prefix of PROTECTED_PREFIXES) {
+    const prefixLower = prefix.toLowerCase();
+    if (lower === prefixLower || lower.startsWith(prefixLower + '/') || lower.startsWith(prefixLower + '\\')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function validateOutputPath(outputPath: string): string {
+  // Decode URL-encoded sequences (e.g., %2e%2e = ..)
+  const decoded = decodeURIComponent(outputPath);
+
+  // Check for path traversal in decoded input
+  if (decoded.includes('..')) {
     throw new PathValidationError('Path traversal is not allowed');
   }
 
-  // Get current working directory
-  const cwd = process.cwd();
+  // Resolve to absolute path
+  const resolvedPath = path.resolve(decoded);
 
-  // Normalize paths for cross-platform comparison
-  const normalizedPath = resolvedPath.toLowerCase().replace(/\\/g, '/');
-  const normalizedCwd = cwd.toLowerCase().replace(/\\/g, '/');
+  // Normalize for cross-platform comparison
+  const normalizedPath = resolvedPath.replace(/\\/g, '/').toLowerCase();
 
-  // Allow paths within current working directory
-  if (normalizedPath.startsWith(normalizedCwd) || normalizedPath.startsWith(normalizedCwd + '/')) {
-    return resolvedPath;
+  // Check protected paths
+  if (isProtectedPath(normalizedPath)) {
+    throw new PathValidationError(`Cannot write to protected system directory`);
   }
 
-  // Dangerous system paths (Unix + Windows)
-  const dangerousPaths = [
-    // Unix
-    '/',
-    '/bin',
-    '/etc',
-    '/usr',
-    '/var',
-    '/sys',
-    '/proc',
-    '/dev',
-    '/boot',
-    '/lib',
-    '/lib64',
-    '/sbin',
-    '/root',
-    '/mnt',
-    '/opt',
-    '/srv',
-    '/tmp',
-    // Windows
-    'c:/windows',
-    'c:/windows/system32',
-    'c:/program files',
-    'c:/program files (x86)',
-    'c:/users/default',
-    'c:/programdata',
-    // macOS
-    '/system',
-    '/library',
-    '/applications',
-  ];
-
-  for (const dangerous of dangerousPaths) {
-    if (normalizedPath === dangerous || normalizedPath.startsWith(dangerous + '/')) {
-      throw new PathValidationError(`Cannot write to protected system directory: ${dangerous}`);
-    }
-  }
-
-  // Check if path exists
+  // Check if path exists and is a directory
   if (fs.existsSync(resolvedPath)) {
     const stat = fs.statSync(resolvedPath);
     if (!stat.isDirectory()) {
@@ -80,51 +62,30 @@ export function validateOutputPath(outputPath: string): string {
 }
 
 export function validateProjectName(name: string): void {
-  // Check for empty or whitespace-only names
   if (!name || name.trim().length === 0) {
     throw new PathValidationError('Project name cannot be empty');
   }
 
-  // Check for valid characters (alphanumeric, hyphen, underscore)
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
     throw new PathValidationError(
       'Project name can only contain letters, numbers, hyphens, and underscores'
     );
   }
 
-  // Check for leading/trailing hyphens or dots
   if (name.startsWith('-') || name.startsWith('.') || name.endsWith('-') || name.endsWith('.')) {
     throw new PathValidationError('Project name cannot start or end with hyphen or dot');
   }
 
-  // Check length
   if (name.length > 214) {
-    throw new PathValidationError('Project name cannot be longer than 214 characters');
-  }
-
-  // Reserved names
-  const reserved = [
-    'node_modules',
-    'dist',
-    'build',
-    'coverage',
-    '.git',
-    '.github',
-    '.env',
-    'templates',
-    'src',
-    'tests',
-  ];
-  if (reserved.includes(name.toLowerCase())) {
-    throw new PathValidationError(`Project name '${name}' is reserved. Please choose a different name.`);
+    throw new PathValidationError('Project name cannot exceed 214 characters');
   }
 }
 
-export function sanitizeFileName(fileName: string): string {
-  // Remove or replace dangerous characters
-  return fileName
+const DANGEROUS_FILENAME_CHARS = /[<>"?*\x00-\x1f]/g;
+
+export function sanitizeFileName(name: string): string {
+  return name
+    .replace(DANGEROUS_FILENAME_CHARS, '')
     .replace(/\.\./g, '')
-    .replace(/[<>:"|?*]/g, '')
-    .replace(/\0/g, '')
     .trim();
 }

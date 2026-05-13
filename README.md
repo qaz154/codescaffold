@@ -7,7 +7,6 @@
 [![npm version](https://img.shields.io/npm/v/@qaz154/codescaffold?style=flat-square)](https://www.npmjs.com/package/@qaz154/codescaffold)
 [![License](https://img.shields.io/npm/l/@qaz154/codescaffold?style=flat-square)](https://github.com/qaz154/codescaffold/blob/main/LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/qaz154/codescaffold/ci.yml?style=flat-square)](https://github.com/qaz154/codescaffold/actions)
-[![Tests](https://img.shields.io/badge/tests-108%20passed-brightgreen?style=flat-square)](https://github.com/qaz154/codescaffold)
 
 Generate production-ready project scaffolds in seconds with AI assistance.
 
@@ -33,8 +32,8 @@ With CodeScaffold, you describe what you want, and we build it for you. No more 
 
 Choose exactly the components you need:
 
-- **5 Frameworks**: Next.js, Express, FastAPI, Go Gin
-- **5 Databases**: PostgreSQL, SQLite, with Prisma or Drizzle
+- **4 Frameworks**: Next.js, Express, FastAPI, Go Gin
+- **3 Databases**: PostgreSQL, MySQL, SQLite with Prisma or Drizzle
 - **4 Auth Methods**: NextAuth, JWT, Clerk, or none
 - **5 UI Options**: Tailwind + shadcn/ui, MUI, Ant Design, or none
 

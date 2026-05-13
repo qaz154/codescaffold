@@ -7,8 +7,7 @@
  */
 export function detectKeyword(text: string, patterns: string[]): boolean {
   const lowerText = text.toLowerCase();
-  const sortedPatterns = [...patterns].sort((a, b) => b.length - a.length);
-  return sortedPatterns.some((pattern) => lowerText.includes(pattern.toLowerCase()));
+  return patterns.some((pattern) => lowerText.includes(pattern.toLowerCase()));
 }
 
 /**
@@ -20,8 +19,7 @@ export function detectKeyword(text: string, patterns: string[]): boolean {
  */
 export function detectFirstKeyword<T>(text: string, patterns: [string, T][]): T | null {
   const lowerText = text.toLowerCase();
-  const sortedPatterns = [...patterns].sort((a, b) => b[0].length - a[0].length);
-  for (const [pattern, value] of sortedPatterns) {
+  for (const [pattern, value] of patterns) {
     if (lowerText.includes(pattern.toLowerCase())) {
       return value;
     }

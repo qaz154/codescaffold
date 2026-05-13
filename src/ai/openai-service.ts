@@ -67,7 +67,8 @@ Respond with this exact JSON structure:
 }`;
 
 export class AIService {
-  private client: import('openai').default | null = null;
+  private openAIClient: import('openai').default | null = null;
+  private anthropicClient: import('@anthropic-ai/sdk').default | null = null;
   private apiKey: string | null = null;
   private provider: 'openai' | 'claude' | 'local' = 'openai';
   private model: string = 'gpt-4o-mini';
@@ -108,16 +109,25 @@ export class AIService {
   }
 
   private initializeClient(config: AIServiceConfig): void {
-    const OpenAI = require('openai').default;
-
-    if (this.provider === 'local') {
-      this.client = new OpenAI({
+    if (this.provider === 'claude') {
+      // Use real Anthropic SDK
+      const Anthropic = require('@anthropic-ai/sdk').default;
+      this.anthropicClient = new Anthropic({
+        apiKey: this.apiKey || undefined,
+        timeout: config.timeout || DEFAULT_TIMEOUT_MS,
+      });
+    } else if (this.provider === 'local') {
+      // Local LLM via OpenAI-compatible API
+      const OpenAI = require('openai').default;
+      this.openAIClient = new OpenAI({
         apiKey: 'ollama',
         baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1',
         timeout: config.timeout || DEFAULT_TIMEOUT_MS,
       });
     } else {
-      this.client = new OpenAI({
+      // OpenAI
+      const OpenAI = require('openai').default;
+      this.openAIClient = new OpenAI({
         apiKey: this.apiKey || undefined,
         baseURL: config.baseURL,
         timeout: config.timeout || DEFAULT_TIMEOUT_MS,
@@ -126,7 +136,7 @@ export class AIService {
   }
 
   isConfigured(): boolean {
-    return this.client !== null;
+    return this.anthropicClient !== null || this.openAIClient !== null;
   }
 
   getProviderInfo(): { provider: string; model: string } {
@@ -134,7 +144,7 @@ export class AIService {
   }
 
   async analyzeRequirements(requirement: string): Promise<AIAnalysisResult> {
-    if (!this.client) {
+    if (!this.isConfigured()) {
       throw new Error(
         'AI service not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.'
       );
@@ -143,30 +153,13 @@ export class AIService {
     const userPrompt = USER_PROMPT_TEMPLATE.replace('{requirement}', requirement);
 
     try {
-      const response = await this.client.chat.completions.create({
-        model: this.model,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt },
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.3,
-      });
-
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error('No response from AI service');
+      if (this.anthropicClient) {
+        return await this.analyzeWithClaude(userPrompt);
+      } else if (this.openAIClient) {
+        return await this.analyzeWithOpenAI(userPrompt);
+      } else {
+        throw new Error('No AI client initialized');
       }
-
-      const parsed = JSON.parse(content);
-      const result = AnalysisSchema.parse(parsed);
-
-      return {
-        projectType: result.projectType,
-        database: result.database,
-        features: result.features,
-        reasoning: result.reasoning,
-      };
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new Error(`AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`);
@@ -175,44 +168,132 @@ export class AIService {
     }
   }
 
+  private async analyzeWithOpenAI(userPrompt: string): Promise<AIAnalysisResult> {
+    const response = await this.openAIClient!.chat.completions.create({
+      model: this.model,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.3,
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response from AI service');
+    }
+
+    const parsed = JSON.parse(content);
+    const result = AnalysisSchema.parse(parsed);
+
+    return {
+      projectType: result.projectType,
+      database: result.database,
+      features: result.features,
+      reasoning: result.reasoning,
+    };
+  }
+
+  private async analyzeWithClaude(userPrompt: string): Promise<AIAnalysisResult> {
+    const response = await this.anthropicClient!.messages.create({
+      model: this.model,
+      max_tokens: 1024,
+      system: SYSTEM_PROMPT,
+      messages: [
+        { role: 'user', content: userPrompt },
+      ],
+    });
+
+    const content = response.content[0];
+    if (!content || content.type !== 'text') {
+      throw new Error('No response from AI service');
+    }
+
+    const parsed = JSON.parse(content.text);
+    const result = AnalysisSchema.parse(parsed);
+
+    return {
+      projectType: result.projectType,
+      database: result.database,
+      features: result.features,
+      reasoning: result.reasoning,
+    };
+  }
+
   async analyzeRequirementWithPrompt<T>(
     systemPrompt: string,
     userPrompt: string,
     schema: z.ZodSchema<T>
   ): Promise<T> {
-    if (!this.client) {
+    if (!this.isConfigured()) {
       throw new Error(
         'AI service not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.'
       );
     }
 
     try {
-      const response = await this.client.chat.completions.create({
-        model: this.model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.3,
-        max_tokens: 4000,
-      });
-
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error('No response from AI service');
+      if (this.anthropicClient) {
+        return await this.analyzePromptWithClaude(systemPrompt, userPrompt, schema);
+      } else if (this.openAIClient) {
+        return await this.analyzePromptWithOpenAI(systemPrompt, userPrompt, schema);
+      } else {
+        throw new Error('No AI client initialized');
       }
-
-      const parsed = JSON.parse(content);
-      const result = schema.parse(parsed);
-
-      return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new Error(`AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`);
       }
       throw error;
     }
+  }
+
+  private async analyzePromptWithOpenAI<T>(
+    systemPrompt: string,
+    userPrompt: string,
+    schema: z.ZodSchema<T>
+  ): Promise<T> {
+    const response = await this.openAIClient!.chat.completions.create({
+      model: this.model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.3,
+      max_tokens: 4000,
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response from AI service');
+    }
+
+    const parsed = JSON.parse(content);
+    return schema.parse(parsed);
+  }
+
+  private async analyzePromptWithClaude<T>(
+    systemPrompt: string,
+    userPrompt: string,
+    schema: z.ZodSchema<T>
+  ): Promise<T> {
+    const response = await this.anthropicClient!.messages.create({
+      model: this.model,
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [
+        { role: 'user', content: userPrompt },
+      ],
+    });
+
+    const content = response.content[0];
+    if (!content || content.type !== 'text') {
+      throw new Error('No response from AI service');
+    }
+
+    const parsed = JSON.parse(content.text);
+    return schema.parse(parsed);
   }
 }
 

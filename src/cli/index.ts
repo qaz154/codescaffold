@@ -32,29 +32,35 @@ ${chalk.white('AI-Powered Full-Stack Project Scaffold Generator')}
 `;
 
 function showBanner(): void {
-  console.log(chalk.bold(asciiLogo));
-  console.log(
-    boxen(
-      `${chalk.green('CodeScaffold')} v${version}\n` +
-      `${chalk.gray('Generate production-ready project scaffolds in seconds')}\n\n` +
-      `${chalk.dim('Multi-model AI support: OpenAI, Claude, Local LLMs')}`,
-      { padding: 1, borderColor: 'cyan', borderStyle: 'round' }
-    )
-  );
-  console.log();
+  if (process.stdout.isTTY !== false && !process.argv.includes('--quiet')) {
+    console.log(chalk.bold(asciiLogo));
+    console.log(
+      boxen(
+        `${chalk.green('CodeScaffold')} v${version}\n` +
+        `${chalk.gray('Generate production-ready project scaffolds in seconds')}\n\n` +
+        `${chalk.dim('Multi-model AI support: OpenAI, Claude, Local LLMs')}`,
+        { padding: 1, borderColor: 'cyan', borderStyle: 'round' }
+      )
+    );
+    console.log();
+  }
 }
 
 function showSystemInfo(): void {
-  console.log(chalk.dim('System Info:'));
-  printAIStatus();
-  printConfigInfo();
-  console.log();
+  if (process.argv.includes('--verbose') || process.argv.includes('-v')) {
+    console.log(chalk.dim('System Info:'));
+    printAIStatus();
+    printConfigInfo();
+    console.log();
+  }
 }
 
 program
   .name('codescaffold')
   .description('AI-Powered Full-Stack Project Scaffold Generator')
-  .version(version);
+  .version(version)
+  .option('-q, --quiet', 'Suppress startup banner')
+  .option('-v, --verbose', 'Show system information');
 
 program
   .command('init')

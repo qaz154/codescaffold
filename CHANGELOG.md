@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.8] - 2026-05-13
+
+### Fixed
+
+#### Security
+- **Path traversal**: Fixed URL-encoded bypass vulnerability (e.g., `%2e%2e`). Now properly decodes and validates all paths.
+- **Protected paths**: Improved system directory protection with better cross-platform checks.
+
+#### Dependencies
+- **Unrealistic versions**: Fixed non-existent package versions (typescript ^6.0.3, vitest ^4.1.5, eslint ^10.2.1, etc.)
+- **Blocking prepare script**: Removed `prepare` script that ran build during `npm install`
+- **Realistic version ranges**: Updated all dependencies to stable, released versions
+- **ESM module**: Added `"type": "module"` to package.json for proper ESM support
+
+#### AI Service
+- **Claude SDK**: Replaced fake OpenAI-API-based Claude "support" with real `@anthropic-ai/sdk` integration
+- **Proper routing**: Claude, OpenAI, and Local LLM now use correct SDKs and API endpoints
+
+#### Code Quality
+- **Dangerous merge**: Removed unsafe `mergeFiles()` logic that could produce duplicate/invalid code
+- **detectLanguage duplication**: Eliminated duplicate language detection functions across modules
+- **Unused patterns**: Removed unnecessary sorting in keyword detection (O(n log n) → O(n))
+
+#### CLI Experience
+- **Startup noise**: Banner only shows on TTY, with `--quiet` flag support
+- **Verbose mode**: Added `--verbose` flag to show system info when needed
+- **Author field**: Fixed to "QAZ154" instead of generic "Developer"
+
+### Changed
+
+#### Build System
+- **dev script**: Switched from `ts-node` to `tsx` for faster TypeScript execution
+- **tsconfig**: Updated to ESNext module with bundler resolution for modern tooling
+
+#### CI/CD
+- **Lint job**: Separated lint from type-check, removed flaky E2E step
+- **ESLint config**: Added proper ESLint 9 flat config with TypeScript support
+
+### Documentation
+- **README**: Removed inflated claims ("108 tests", inaccurate framework counts)
+- **Cleanup**: Removed unused dev dependencies (removed duplicate eslint plugins, unused packages)
+
 ## [1.14.5] - 2026-05-12
 
 ### Fixed
