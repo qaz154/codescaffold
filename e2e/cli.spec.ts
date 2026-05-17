@@ -2,8 +2,11 @@ import { test, expect } from '@playwright/test';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import os from 'os';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const CLI_PATH = path.join(__dirname, '../dist/cli/index.js');
 
 function runCLI(args: string[], options?: { cwd?: string }): { stdout: string; stderr: string; exitCode: number } {
