@@ -22,8 +22,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run ESLint
+        run: npx eslint src/
+
       - name: Run Type check
-        run: npm run lint
+        run: npx tsc --noEmit
+
+      - name: Check formatting
+        run: npx prettier --check "src/**/*.ts"
 
   test:
     name: Unit Tests
@@ -60,3 +66,8 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      - name: Run E2E tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e

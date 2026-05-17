@@ -37,8 +37,8 @@ function showBanner(): void {
     console.log(
       boxen(
         `${chalk.green('CodeScaffold')} v${version}\n` +
-        `${chalk.gray('Generate production-ready project scaffolds in seconds')}\n\n` +
-        `${chalk.dim('Multi-model AI support: OpenAI, Claude, Local LLMs')}`,
+          `${chalk.gray('Generate production-ready project scaffolds in seconds')}\n\n` +
+          `${chalk.dim('Multi-model AI support: OpenAI, Claude, Local LLMs')}`,
         { padding: 1, borderColor: 'cyan', borderStyle: 'round' }
       )
     );
@@ -72,15 +72,12 @@ program
   .option('--model <model>', 'AI model to use')
   .action(initCommand);
 
-program
-  .command('list')
-  .description('List all available templates')
-  .action(listCommand);
+program.command('list').description('List all available templates').action(listCommand);
 
 program
   .command('info <template>')
   .description('Show detailed information about a template')
-  .action(async (template) => {
+  .action(async template => {
     const { infoCommand } = await import('../commands/info');
     await infoCommand(template);
   });
@@ -104,7 +101,7 @@ program
   .option('-f, --force', 'Overwrite existing files', false)
   .option('--provider <provider>', 'AI provider (openai, claude, local)')
   .option('--model <model>', 'AI model to use')
-  .action(async (options) => {
+  .action(async options => {
     const { generateCommand } = await import('../commands/generate');
     await generateCommand(options);
   });
@@ -113,7 +110,7 @@ program
   .command('serve')
   .description('Start the CodeScaffold Web UI')
   .option('-p, --port <number>', 'Port to listen on', '3000')
-  .action(async (options) => {
+  .action(async options => {
     const { serveCommand } = await import('../commands/serve');
     await serveCommand(options);
   });
@@ -125,7 +122,7 @@ program
   .option('--show', 'Show current configuration')
   .option('--reset-prefs', 'Reset user preferences')
   .option('--clear-cache', 'Clear offline cache')
-  .action(async (options) => {
+  .action(async options => {
     const { configCommand } = await import('../commands/config');
     await configCommand(options);
   });
@@ -142,7 +139,7 @@ program
   .command('validate')
   .description('Validate a CodeScaffold-generated project')
   .option('-d, --directory <path>', 'Project directory to validate', '.')
-  .action(async (options) => {
+  .action(async options => {
     const { validateCommand } = await import('../commands/validate');
     await validateCommand(options);
   });
@@ -153,7 +150,7 @@ program
   .option('-d, --directory <path>', 'Project directory to upgrade', '.')
   .option('-f, --force', 'Skip confirmation prompts', false)
   .option('--no-backup', 'Skip backup creation')
-  .action(async (options) => {
+  .action(async options => {
     const { upgradeCommand } = await import('../commands/upgrade');
     await upgradeCommand(options);
   });
@@ -169,7 +166,7 @@ program
   .option('--pkg <manager>', '包管理器 (npm/yarn/pnpm/bun)')
   .option('--current-dir', '在当前目录创建项目')
   .option('-o, --output <path>', '输出目录', '.')
-  .action(async (options) => {
+  .action(async options => {
     const { composeCommand } = await import('../commands/compose');
     await composeCommand(options);
   });
@@ -182,7 +179,7 @@ program
   .option('-r, --remove <name>', '移除模板')
   .option('-s, --search <query>', '搜索模板')
   .option('-v, --version <name>', '查看模板版本')
-  .action(async (options) => {
+  .action(async options => {
     const { templateCommand } = await import('../commands/template');
     await templateCommand(options);
   });
@@ -194,7 +191,7 @@ program
   .option('-t, --target <path>', '目标路径')
   .option('-f, --framework <name>', '目标框架')
   .option('--dry', '仅预览，不实际迁移')
-  .action(async (options) => {
+  .action(async options => {
     const { migrateCommand } = await import('../commands/migrate');
     await migrateCommand(options);
   });
@@ -211,7 +208,7 @@ async function main(): Promise<void> {
   program.parse();
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error(chalk.red('Error:'), error.message);
   process.exit(1);
 });

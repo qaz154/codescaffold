@@ -12,18 +12,18 @@ describe('Component Definitions', () => {
     });
 
     it('should have unique IDs', () => {
-      const ids = frameworks.options.map((opt) => opt.id);
+      const ids = frameworks.options.map(opt => opt.id);
       expect(new Set(ids).size).toBe(ids.length);
     });
 
     it('should have Next.js App Router option', () => {
-      const nextjs = frameworks.options.find((opt) => opt.id === 'nextjs-app');
+      const nextjs = frameworks.options.find(opt => opt.id === 'nextjs-app');
       expect(nextjs).toBeDefined();
       expect(nextjs?.dependencies['next']).toBeDefined();
     });
 
     it('should have Express API option', () => {
-      const express = frameworks.options.find((opt) => opt.id === 'express-api');
+      const express = frameworks.options.find(opt => opt.id === 'express-api');
       expect(express).toBeDefined();
       expect(express?.dependencies['express']).toBeDefined();
     });
@@ -39,7 +39,7 @@ describe('Component Definitions', () => {
     });
 
     it('should have Prisma PostgreSQL option', () => {
-      const prisma = databases.options.find((opt) => opt.id === 'prisma-pg');
+      const prisma = databases.options.find(opt => opt.id === 'prisma-pg');
       expect(prisma).toBeDefined();
       expect(prisma?.dependencies['@prisma/client']).toBeDefined();
     });
@@ -55,7 +55,7 @@ describe('Component Definitions', () => {
     });
 
     it('should have NextAuth option', () => {
-      const nextauth = auth.options.find((opt) => opt.id === 'nextauth');
+      const nextauth = auth.options.find(opt => opt.id === 'nextauth');
       expect(nextauth).toBeDefined();
       expect(nextauth?.dependencies['next-auth']).toBeDefined();
     });
@@ -71,7 +71,7 @@ describe('Component Definitions', () => {
     });
 
     it('should have Tailwind + shadcn option', () => {
-      const tailwind = ui.options.find((opt) => opt.id === 'tailwind-shadcn');
+      const tailwind = ui.options.find(opt => opt.id === 'tailwind-shadcn');
       expect(tailwind).toBeDefined();
       expect(tailwind?.dependencies['tailwindcss']).toBeDefined();
     });

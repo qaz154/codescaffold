@@ -27,46 +27,28 @@ export async function fastGenerate(options: FastGenerateOptions): Promise<string
 
   // Python 和 Go 不生成 package.json
   if (packageJson !== null) {
-    fs.writeFileSync(
-      path.join(projectPath, 'package.json'),
-      JSON.stringify(packageJson, null, 2)
-    );
+    fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
   }
 
   // Python 生成 pyproject.toml
   if (options.framework === 'fastapi') {
-    fs.writeFileSync(
-      path.join(projectPath, 'pyproject.toml'),
-      generatePyprojectToml()
-    );
+    fs.writeFileSync(path.join(projectPath, 'pyproject.toml'), generatePyprojectToml());
   }
 
   // Go 生成 go.mod
   if (options.framework === 'go-gin') {
-    fs.writeFileSync(
-      path.join(projectPath, 'go.mod'),
-      generateGoMod(options.name)
-    );
+    fs.writeFileSync(path.join(projectPath, 'go.mod'), generateGoMod(options.name));
   }
 
   // TypeScript 项目生成 tsconfig.json
   if (options.framework !== 'fastapi' && options.framework !== 'go-gin') {
     const tsConfig = generateTsConfig(options);
-    fs.writeFileSync(
-      path.join(projectPath, 'tsconfig.json'),
-      JSON.stringify(tsConfig, null, 2)
-    );
+    fs.writeFileSync(path.join(projectPath, 'tsconfig.json'), JSON.stringify(tsConfig, null, 2));
   }
 
-  fs.writeFileSync(
-    path.join(projectPath, '.gitignore'),
-    generateGitignore()
-  );
+  fs.writeFileSync(path.join(projectPath, '.gitignore'), generateGitignore());
 
-  fs.writeFileSync(
-    path.join(projectPath, 'README.md'),
-    generateReadme(options)
-  );
+  fs.writeFileSync(path.join(projectPath, 'README.md'), generateReadme(options));
 
   generateStructure(projectPath, options);
 
@@ -80,11 +62,11 @@ function generatePackageJson(options: FastGenerateOptions) {
   // 框架
   if (options.framework.startsWith('nextjs')) {
     deps['next'] = '^15.0.0';
-    deps['react'] = '^18.3.0';
-    deps['react-dom'] = '^18.3.0';
+    deps['react'] = '^19.0.0';
+    deps['react-dom'] = '^19.0.0';
     devDeps['@types/node'] = '^22.0.0';
-    devDeps['@types/react'] = '^18.3.0';
-    devDeps['@types/react-dom'] = '^18.3.0';
+    devDeps['@types/react'] = '^19.0.0';
+    devDeps['@types/react-dom'] = '^19.0.0';
     devDeps['typescript'] = '^5.6.0';
   } else if (options.framework === 'express-api') {
     deps['express'] = '^4.21.0';

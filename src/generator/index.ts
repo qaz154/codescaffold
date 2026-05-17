@@ -2,7 +2,11 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import { analyzeRequirements, formatAnalysisReport, AnalysisResult } from '../ai/analyzer';
-import { recommendArchitecture, formatArchitectureReport, ArchitectureRecommendation } from '../ai/architect';
+import {
+  recommendArchitecture,
+  formatArchitectureReport,
+  ArchitectureRecommendation,
+} from '../ai/architect';
 import { getAIService, AIAnalysisResult } from '../ai/openai-service';
 import { copyTemplate, extractProjectName } from './copy';
 import { generateCustomCode, logGenerationResult } from './generate';
@@ -146,7 +150,7 @@ export async function validateTemplate(template: string): Promise<boolean> {
  */
 export function listTemplates(): string[] {
   const templatesDir = path.join(__dirname, '../../templates');
-  return fs.readdirSync(templatesDir).filter((dir) => {
+  return fs.readdirSync(templatesDir).filter(dir => {
     const stat = fs.statSync(path.join(templatesDir, dir));
     return stat.isDirectory();
   });

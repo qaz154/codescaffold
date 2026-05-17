@@ -3,7 +3,6 @@ import inquirer from 'inquirer';
 import ora from 'ora';
 import { generateProject } from '../template/generator';
 import { handleCLIError, ValidationError, TemplateError } from '../utils/errors';
-import { listTemplates } from '../generator';
 
 interface CreateOptions {
   template?: string;
@@ -11,7 +10,12 @@ interface CreateOptions {
   force?: boolean;
 }
 
-const AVAILABLE_TEMPLATES = ['nextjs-fullstack', 'express-api', 'python-fastapi', 'go-microservice'];
+const AVAILABLE_TEMPLATES = [
+  'nextjs-fullstack',
+  'express-api',
+  'python-fastapi',
+  'go-microservice',
+];
 
 export async function createCommand(name: string, options: CreateOptions) {
   // Validate inputs
@@ -26,7 +30,7 @@ export async function createCommand(name: string, options: CreateOptions) {
         type: 'list',
         name: 'template',
         message: 'Select a template:',
-        choices: AVAILABLE_TEMPLATES.map((t) => ({
+        choices: AVAILABLE_TEMPLATES.map(t => ({
           name: t,
           value: t,
         })),
@@ -75,7 +79,6 @@ export async function createCommand(name: string, options: CreateOptions) {
     console.log(chalk.gray('  npm install'));
     console.log(chalk.gray('  npm run dev'));
     console.log();
-
   } catch (error) {
     spinner.fail(chalk.red('Project creation failed'));
 

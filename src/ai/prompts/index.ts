@@ -69,16 +69,22 @@ Generate:
 
 Return JSON with files array.`,
     outputSchema: z.object({
-      files: z.array(z.object({
-        path: z.string(),
-        content: z.string(),
-      })),
-      schemaUpdates: z.array(z.object({
-        model: z.string(),
-        field: z.string(),
-        type: z.string(),
-        attributes: z.array(z.string()),
-      })).optional(),
+      files: z.array(
+        z.object({
+          path: z.string(),
+          content: z.string(),
+        })
+      ),
+      schemaUpdates: z
+        .array(
+          z.object({
+            model: z.string(),
+            field: z.string(),
+            type: z.string(),
+            attributes: z.array(z.string()),
+          })
+        )
+        .optional(),
     }),
   },
 
@@ -119,10 +125,12 @@ Routes needed:
 
 Return JSON with route file.`,
     outputSchema: z.object({
-      files: z.array(z.object({
-        path: z.string(),
-        content: z.string(),
-      })),
+      files: z.array(
+        z.object({
+          path: z.string(),
+          content: z.string(),
+        })
+      ),
     }),
   },
 
@@ -164,10 +172,12 @@ Generate controller and routes for:
 
 Return JSON with files array.`,
     outputSchema: z.object({
-      files: z.array(z.object({
-        path: z.string(),
-        content: z.string(),
-      })),
+      files: z.array(
+        z.object({
+          path: z.string(),
+          content: z.string(),
+        })
+      ),
     }),
   },
 
@@ -200,10 +210,12 @@ Database: {{DATABASE}}
 
 Return JSON with schema file content.`,
     outputSchema: z.object({
-      files: z.array(z.object({
-        path: z.string(),
-        content: z.string(),
-      })),
+      files: z.array(
+        z.object({
+          path: z.string(),
+          content: z.string(),
+        })
+      ),
     }),
   },
 
@@ -238,10 +250,12 @@ Features needed: password hashing, JWT token creation/validation, login endpoint
 
 Return JSON with auth files.`,
     outputSchema: z.object({
-      files: z.array(z.object({
-        path: z.string(),
-        content: z.string(),
-      })),
+      files: z.array(
+        z.object({
+          path: z.string(),
+          content: z.string(),
+        })
+      ),
     }),
   },
 
@@ -275,23 +289,28 @@ Files needed: password hashing, JWT generation/validation, auth middleware, logi
 
 Return JSON with auth files.`,
     outputSchema: z.object({
-      files: z.array(z.object({
-        path: z.string(),
-        content: z.string(),
-      })),
+      files: z.array(
+        z.object({
+          path: z.string(),
+          content: z.string(),
+        })
+      ),
     }),
   },
 ];
 
 export function getPromptTemplate(key: string): PromptTemplate | undefined {
-  return PROMPT_TEMPLATES.find((p) => p.key === key);
+  return PROMPT_TEMPLATES.find(p => p.key === key);
 }
 
 export function getPromptTemplatesForProject(projectType: string): PromptTemplate[] {
-  return PROMPT_TEMPLATES.filter((p) => p.supportedProjectTypes.includes(projectType));
+  return PROMPT_TEMPLATES.filter(p => p.supportedProjectTypes.includes(projectType));
 }
 
-export function renderUserPrompt(template: PromptTemplate, variables: Record<string, string>): string {
+export function renderUserPrompt(
+  template: PromptTemplate,
+  variables: Record<string, string>
+): string {
   let prompt = template.userPromptTemplate;
 
   for (const [key, value] of Object.entries(variables)) {

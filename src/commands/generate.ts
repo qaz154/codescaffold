@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import { generateWithAI } from '../generator';
 import { handleCLIError, ValidationError } from '../utils/errors';
 import { loadConfig } from '../utils/config';
-import { getAIService, AIServiceConfig } from '../ai/openai-service';
+import { getAIService } from '../ai/openai-service';
 
 interface GenerateOptions {
   requirement?: string;
@@ -70,7 +70,9 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
       );
     }
 
-    console.log(chalk.dim(`\nUsing AI provider: ${chalk.cyan(effectiveProvider || 'auto-detected')}`));
+    console.log(
+      chalk.dim(`\nUsing AI provider: ${chalk.cyan(effectiveProvider || 'auto-detected')}`)
+    );
     if (effectiveModel) {
       console.log(chalk.dim(`Model: ${chalk.cyan(effectiveModel)}`));
     }
@@ -102,7 +104,6 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
     if (report.generatedFiles && report.generatedFiles > 0) {
       console.log(chalk.cyan(`\n📝 AI generated ${report.generatedFiles} custom file(s)\n`));
     }
-
   } catch (error) {
     handleCLIError(error);
     process.exit(1);

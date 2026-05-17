@@ -42,10 +42,8 @@ export function runQualityChecks(projectPath: string): QualityReport {
   // 检查代码规范
   checks.push(checkCodeStyle(projectPath));
 
-  const passed = checks.every((c) => c.passed || c.severity !== 'error');
-  const score = Math.round(
-    (checks.filter((c) => c.passed).length / checks.length) * 100
-  );
+  const passed = checks.every(c => c.passed || c.severity !== 'error');
+  const score = Math.round((checks.filter(c => c.passed).length / checks.length) * 100);
 
   return { passed, checks, score };
 }
@@ -59,11 +57,21 @@ function checkPackageJson(projectPath: string): QualityCheck {
   try {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     if (!pkg.name || !pkg.version) {
-      return { name: 'package.json', passed: false, message: 'package.json 缺少 name 或 version', severity: 'warning' };
+      return {
+        name: 'package.json',
+        passed: false,
+        message: 'package.json 缺少 name 或 version',
+        severity: 'warning',
+      };
     }
     return { name: 'package.json', passed: true, message: 'package.json 有效', severity: 'info' };
   } catch {
-    return { name: 'package.json', passed: false, message: 'package.json 格式错误', severity: 'error' };
+    return {
+      name: 'package.json',
+      passed: false,
+      message: 'package.json 格式错误',
+      severity: 'error',
+    };
   }
 }
 
@@ -72,7 +80,12 @@ function checkTsConfig(projectPath: string): QualityCheck {
   if (fs.existsSync(tsConfigPath)) {
     return { name: 'tsconfig.json', passed: true, message: 'tsconfig.json 存在', severity: 'info' };
   }
-  return { name: 'tsconfig.json', passed: false, message: '缺少 tsconfig.json', severity: 'warning' };
+  return {
+    name: 'tsconfig.json',
+    passed: false,
+    message: '缺少 tsconfig.json',
+    severity: 'warning',
+  };
 }
 
 function checkGitignore(projectPath: string): QualityCheck {
@@ -82,7 +95,12 @@ function checkGitignore(projectPath: string): QualityCheck {
     if (content.includes('node_modules') && content.includes('.env')) {
       return { name: '.gitignore', passed: true, message: '.gitignore 配置正确', severity: 'info' };
     }
-    return { name: '.gitignore', passed: false, message: '.gitignore 缺少重要配置', severity: 'warning' };
+    return {
+      name: '.gitignore',
+      passed: false,
+      message: '.gitignore 缺少重要配置',
+      severity: 'warning',
+    };
   }
   return { name: '.gitignore', passed: false, message: '缺少 .gitignore', severity: 'error' };
 }
@@ -116,9 +134,10 @@ function checkDockerfile(projectPath: string): QualityCheck {
 }
 
 function checkTestFiles(projectPath: string): QualityCheck {
-  const hasTests = fs.existsSync(path.join(projectPath, 'tests')) ||
-                   fs.existsSync(path.join(projectPath, '__tests__')) ||
-                   fs.existsSync(path.join(projectPath, 'src', '__tests__'));
+  const hasTests =
+    fs.existsSync(path.join(projectPath, 'tests')) ||
+    fs.existsSync(path.join(projectPath, '__tests__')) ||
+    fs.existsSync(path.join(projectPath, 'src', '__tests__'));
 
   if (hasTests) {
     return { name: '测试文件', passed: true, message: '测试目录存在', severity: 'info' };
@@ -127,11 +146,13 @@ function checkTestFiles(projectPath: string): QualityCheck {
 }
 
 function checkCodeStyle(projectPath: string): QualityCheck {
-  const hasPrettier = fs.existsSync(path.join(projectPath, '.prettierrc')) ||
-                      fs.existsSync(path.join(projectPath, '.prettierrc.json'));
-  const hasEslint = fs.existsSync(path.join(projectPath, '.eslintrc')) ||
-                    fs.existsSync(path.join(projectPath, '.eslintrc.json')) ||
-                    fs.existsSync(path.join(projectPath, 'eslint.config.js'));
+  const hasPrettier =
+    fs.existsSync(path.join(projectPath, '.prettierrc')) ||
+    fs.existsSync(path.join(projectPath, '.prettierrc.json'));
+  const hasEslint =
+    fs.existsSync(path.join(projectPath, '.eslintrc')) ||
+    fs.existsSync(path.join(projectPath, '.eslintrc.json')) ||
+    fs.existsSync(path.join(projectPath, 'eslint.config.js'));
 
   if (hasPrettier || hasEslint) {
     return { name: '代码规范', passed: true, message: '代码规范配置存在', severity: 'info' };
@@ -143,12 +164,18 @@ export function printQualityReport(report: QualityReport): void {
   console.log(chalk.cyan('\n🔍 代码质量检查:\n'));
 
   for (const check of report.checks) {
-    const icon = check.passed ? chalk.green('✓') : check.severity === 'error' ? chalk.red('✗') : chalk.yellow('⚠');
+    const icon = check.passed
+      ? chalk.green('✓')
+      : check.severity === 'error'
+        ? chalk.red('✗')
+        : chalk.yellow('⚠');
     const message = check.passed ? check.message : chalk.red(check.message);
     console.log(`  ${icon} ${check.name}: ${message}`);
   }
 
-  console.log(`\n${chalk.bold('质量评分:')} ${report.score >= 80 ? chalk.green(report.score + '%') : chalk.yellow(report.score + '%')}`);
+  console.log(
+    `\n${chalk.bold('质量评分:')} ${report.score >= 80 ? chalk.green(report.score + '%') : chalk.yellow(report.score + '%')}`
+  );
 
   if (report.passed) {
     console.log(chalk.green('\n✅ 质量检查通过'));

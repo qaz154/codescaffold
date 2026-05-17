@@ -11,15 +11,15 @@ export const frameworks: ComponentCategory = {
       name: 'Next.js (App Router)',
       description: 'React 全栈框架，支持 App Router',
       dependencies: {
-        'next': '^15.0.0',
-        'react': '^18.3.0',
+        next: '^15.0.0',
+        react: '^18.3.0',
         'react-dom': '^18.3.0',
       },
       devDependencies: {
         '@types/node': '^22.0.0',
         '@types/react': '^18.3.0',
         '@types/react-dom': '^18.3.0',
-        'typescript': '^5.6.0',
+        typescript: '^5.6.0',
       },
     },
     {
@@ -27,15 +27,15 @@ export const frameworks: ComponentCategory = {
       name: 'Next.js (Pages Router)',
       description: 'React 全栈框架，传统 Pages Router',
       dependencies: {
-        'next': '^15.0.0',
-        'react': '^18.3.0',
+        next: '^15.0.0',
+        react: '^18.3.0',
         'react-dom': '^18.3.0',
       },
       devDependencies: {
         '@types/node': '^22.0.0',
         '@types/react': '^18.3.0',
         '@types/react-dom': '^18.3.0',
-        'typescript': '^5.6.0',
+        typescript: '^5.6.0',
       },
     },
     {
@@ -43,16 +43,16 @@ export const frameworks: ComponentCategory = {
       name: 'Express API',
       description: 'Node.js REST API 框架',
       dependencies: {
-        'express': '^4.21.0',
-        'cors': '^2.8.5',
-        'helmet': '^8.0.0',
-        'dotenv': '^16.4.0',
+        express: '^4.21.0',
+        cors: '^2.8.5',
+        helmet: '^8.0.0',
+        dotenv: '^16.4.0',
       },
       devDependencies: {
         '@types/node': '^22.0.0',
         '@types/express': '^4.17.21',
-        'typescript': '^5.6.0',
-        'tsx': '^4.19.0',
+        typescript: '^5.6.0',
+        tsx: '^4.19.0',
       },
     },
     {
@@ -60,9 +60,9 @@ export const frameworks: ComponentCategory = {
       name: 'FastAPI',
       description: 'Python 高性能异步 API 框架',
       dependencies: {
-        'fastapi': '^0.115.0',
+        fastapi: '^0.115.0',
         'uvicorn[standard]': '^0.32.0',
-        'pydantic': '^2.10.0',
+        pydantic: '^2.10.0',
       },
     },
     {

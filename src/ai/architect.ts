@@ -114,7 +114,15 @@ const TECH_STACK_RECOMMENDATIONS: Record<string, ArchitectureRecommendation> = {
       'Dockerfile',
     ],
     dependencies: {
-      production: ['fastapi', 'uvicorn', 'sqlalchemy', 'alembic', 'pydantic', 'python-jose', 'passlib'],
+      production: [
+        'fastapi',
+        'uvicorn',
+        'sqlalchemy',
+        'alembic',
+        'pydantic',
+        'python-jose',
+        'passlib',
+      ],
       development: ['pytest', 'pytest-asyncio', 'httpx', 'ruff'],
     },
     dockerConfig: {
@@ -170,11 +178,7 @@ export function recommendArchitecture(analysis: AnalysisResult): ArchitectureRec
 }
 
 export function formatArchitectureReport(recommendation: ArchitectureRecommendation): string {
-  const lines: string[] = [
-    '## Architecture Recommendation',
-    '',
-    '### Tech Stack',
-  ];
+  const lines: string[] = ['## Architecture Recommendation', '', '### Tech Stack'];
 
   for (const [key, value] of Object.entries(recommendation.techStack)) {
     if (value) {
@@ -188,9 +192,9 @@ export function formatArchitectureReport(recommendation: ArchitectureRecommendat
 
   lines.push('', '### Dependencies');
   lines.push('**Production**:');
-  lines.push(...recommendation.dependencies.production.map((d) => `- ${d}`));
+  lines.push(...recommendation.dependencies.production.map(d => `- ${d}`));
   lines.push('**Development**:');
-  lines.push(...recommendation.dependencies.development.map((d) => `- ${d}`));
+  lines.push(...recommendation.dependencies.development.map(d => `- ${d}`));
 
   lines.push('', '### Docker');
   lines.push(`- Base Image: ${recommendation.dockerConfig.baseImage}`);

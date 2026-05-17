@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 
 export interface DependencyRule {
-  source: string;      // 依赖方
-  target: string;      // 被依赖方
+  source: string; // 依赖方
+  target: string; // 被依赖方
   type: 'requires' | 'incompatible' | 'optional';
   message: string;
 }
@@ -110,16 +110,16 @@ export function checkCompatibility(
   const components = [database, auth, ui].filter(Boolean);
 
   for (const component of components) {
-    const rules = DEPENDENCY_RULES.filter((r) => r.source === component);
+    const rules = DEPENDENCY_RULES.filter(r => r.source === component);
 
     // 分组检查：requires 规则需要 framework 匹配至少一个 target
-    const requiresRules = rules.filter((r) => r.type === 'requires');
-    const incompatibleRules = rules.filter((r) => r.type === 'incompatible');
-    const optionalRules = rules.filter((r) => r.type === 'optional');
+    const requiresRules = rules.filter(r => r.type === 'requires');
+    const incompatibleRules = rules.filter(r => r.type === 'incompatible');
+    const optionalRules = rules.filter(r => r.type === 'optional');
 
     // requires: framework 必须匹配至少一个 target
     if (requiresRules.length > 0) {
-      const hasMatch = requiresRules.some((r) => framework === r.target);
+      const hasMatch = requiresRules.some(r => framework === r.target);
       if (!hasMatch) {
         // 添加第一个 requires 规则作为错误
         errors.push(requiresRules[0]);
@@ -187,7 +187,7 @@ export function getRecommendedComponents(framework: string): {
       auth: ['jwt'],
       ui: ['none'],
     },
-    'fastapi': {
+    fastapi: {
       database: ['prisma-pg'],
       auth: ['jwt'],
       ui: ['none'],

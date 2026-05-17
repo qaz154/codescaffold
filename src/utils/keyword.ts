@@ -7,7 +7,7 @@
  */
 export function detectKeyword(text: string, patterns: string[]): boolean {
   const lowerText = text.toLowerCase();
-  return patterns.some((pattern) => lowerText.includes(pattern.toLowerCase()));
+  return patterns.some(pattern => lowerText.includes(pattern.toLowerCase()));
 }
 
 /**

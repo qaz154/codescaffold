@@ -33,9 +33,12 @@ export async function generateCustomCode(
   };
 
   const codeGenerator = getCodeGeneratorService();
-  const filesToGenerate = getAllFilesForGeneration(analysis.projectType as ProjectType, analysis.features);
+  const filesToGenerate = getAllFilesForGeneration(
+    analysis.projectType as ProjectType,
+    analysis.features
+  );
 
-  const generateableFiles = filesToGenerate.filter((f) => f.generate);
+  const generateableFiles = filesToGenerate.filter(f => f.generate);
 
   if (generateableFiles.length === 0) {
     return result;
@@ -57,11 +60,11 @@ export async function generateCustomCode(
 export function logGenerationResult(result: GenerationResult): void {
   if (result.warnings.length > 0) {
     console.log(chalk.yellow('\n⚠️ Warnings:'));
-    result.warnings.forEach((w) => console.log(chalk.gray(`  • ${w}`)));
+    result.warnings.forEach(w => console.log(chalk.gray(`  • ${w}`)));
   }
 
   if (result.errors.length > 0) {
     console.log(chalk.red('\n❌ Generation errors:'));
-    result.errors.forEach((e) => console.log(chalk.gray(`  • ${e}`)));
+    result.errors.forEach(e => console.log(chalk.gray(`  • ${e}`)));
   }
 }

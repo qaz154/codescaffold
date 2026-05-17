@@ -1,5 +1,4 @@
 import inquirer from 'inquirer';
-import chalk from 'chalk';
 import { handleCLIError } from '../utils/errors';
 import {
   listCommunityTemplates,
@@ -34,7 +33,6 @@ export async function templateCommand(options: TemplateOptions): Promise<void> {
 
     // 交互式模式
     await interactiveTemplateManagement();
-
   } catch (error) {
     handleCLIError(error);
     process.exit(1);
@@ -66,7 +64,7 @@ async function interactiveTemplateManagement(): Promise<void> {
           type: 'input',
           name: 'source',
           message: '模板源 (github:user/repo):',
-          validate: (input) => {
+          validate: input => {
             if (!input.startsWith('github:')) {
               return '格式: github:user/repo';
             }
@@ -87,7 +85,7 @@ async function interactiveTemplateManagement(): Promise<void> {
           type: 'list',
           name: 'name',
           message: '选择要移除的模板:',
-          choices: templates.map((t) => ({ name: t.name, value: t.name })),
+          choices: templates.map(t => ({ name: t.name, value: t.name })),
         },
       ]);
       removeCommunityTemplate(name);

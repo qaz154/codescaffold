@@ -2,8 +2,8 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import ora from 'ora';
 import { generateProject } from '../template/generator';
-import { handleCLIError, ValidationError } from '../utils/errors';
-import { TEMPLATE_VARIANTS, selectVariant } from '../template/variants';
+import { handleCLIError } from '../utils/errors';
+import { TEMPLATE_VARIANTS } from '../template/variants';
 
 interface InitOptions {
   template?: string;
@@ -12,14 +12,33 @@ interface InitOptions {
 }
 
 const AVAILABLE_TEMPLATES = [
-  { name: 'Next.js Full-Stack', value: 'nextjs-fullstack', description: 'Next.js 15 + Express + Prisma + PostgreSQL' },
-  { name: 'Express REST API', value: 'express-api', description: 'Express + Prisma + PostgreSQL/MySQL' },
-  { name: 'Python FastAPI', value: 'python-fastapi', description: 'FastAPI + SQLAlchemy + Alembic + PostgreSQL' },
-  { name: 'Go Microservice', value: 'go-microservice', description: 'Go 1.22 + Gin + pgx + PostgreSQL' },
+  {
+    name: 'Next.js Full-Stack',
+    value: 'nextjs-fullstack',
+    description: 'Next.js 15 + Express + Prisma + PostgreSQL',
+  },
+  {
+    name: 'Express REST API',
+    value: 'express-api',
+    description: 'Express + Prisma + PostgreSQL/MySQL',
+  },
+  {
+    name: 'Python FastAPI',
+    value: 'python-fastapi',
+    description: 'FastAPI + SQLAlchemy + Alembic + PostgreSQL',
+  },
+  {
+    name: 'Go Microservice',
+    value: 'go-microservice',
+    description: 'Go 1.22 + Gin + pgx + PostgreSQL',
+  },
 ];
 
 export async function initCommand(options: InitOptions) {
-  const spinner = ora({ text: chalk.cyan('Starting project initialization...'), spinner: 'dots' }).start();
+  const spinner = ora({
+    text: chalk.cyan('Starting project initialization...'),
+    spinner: 'dots',
+  }).start();
 
   try {
     const outputDir = options.output || '.';
@@ -30,7 +49,7 @@ export async function initCommand(options: InitOptions) {
         name: 'projectName',
         message: 'Project name:',
         default: 'my-project',
-        validate: (input) => {
+        validate: input => {
           if (!/^[a-zA-Z0-9-_]+$/.test(input)) {
             return 'Project name should only contain letters, numbers, hyphens, and underscores';
           }
@@ -68,7 +87,7 @@ export async function initCommand(options: InitOptions) {
           { name: 'With Authentication - Includes JWT auth', value: 'with-auth' },
         ],
         default: 'default',
-        when: (answers) => {
+        when: answers => {
           const variants = TEMPLATE_VARIANTS[answers.template as string];
           return variants && variants.length > 1;
         },
@@ -85,16 +104,15 @@ export async function initCommand(options: InitOptions) {
 
     // Auto-select variant if only one exists
     const templateVariants = TEMPLATE_VARIANTS[answers.template as string];
-    const selectedVariant = templateVariants && templateVariants.length > 1
-      ? answers.variant
-      : 'default';
+    const selectedVariant =
+      templateVariants && templateVariants.length > 1 ? answers.variant : 'default';
 
     if (templateVariants && templateVariants.length > 1) {
       console.log(chalk.gray(`\nSelected variant: ${selectedVariant}`));
     }
 
     // Simulate generation time
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     const projectPath = await generateProject({
       name: answers.projectName,
@@ -113,7 +131,6 @@ export async function initCommand(options: InitOptions) {
     console.log(chalk.gray('  npm install'));
     console.log(chalk.gray('  npm run dev'));
     console.log();
-
   } catch (error) {
     spinner.fail(chalk.red('Project generation failed'));
     handleCLIError(error);

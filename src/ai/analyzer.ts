@@ -11,13 +11,33 @@ export interface AnalysisResult {
 
 const KEYWORD_PATTERNS = {
   projectType: {
-    'nextjs-fullstack': ['nextjs', 'next.js', 'react', '前端', 'fullstack', 'full-stack', 'full stack', '前后端'],
+    'nextjs-fullstack': [
+      'nextjs',
+      'next.js',
+      'react',
+      '前端',
+      'fullstack',
+      'full-stack',
+      'full stack',
+      '前后端',
+    ],
     'express-api': ['express', 'rest api', 'restapi', 'backend', '后端'],
     'python-fastapi': ['python fastapi', 'fastapi', 'django', 'flask', 'python'],
     'go-microservice': ['golang', 'go microservice', '微服务', 'grpc', 'go '],
   },
   features: {
-    auth: ['auth', '登录', '注册', 'login', 'register', 'jwt', 'passport', 'oauth', '权限', 'permission'],
+    auth: [
+      'auth',
+      '登录',
+      '注册',
+      'login',
+      'register',
+      'jwt',
+      'passport',
+      'oauth',
+      '权限',
+      'permission',
+    ],
     crud: ['crud', '增删改查', 'create', 'read', 'update', 'delete', 'user management', '用户管理'],
     websocket: ['websocket', '实时', 'real-time', 'socket'],
     file: ['file', 'upload', '上传', 'download', 's3', 'storage'],

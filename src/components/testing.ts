@@ -12,7 +12,7 @@ export const testing: ComponentCategory = {
       description: '快速的单元测试框架（推荐）',
       dependencies: {},
       devDependencies: {
-        'vitest': '^2.1.0',
+        vitest: '^2.1.0',
         '@vitest/ui': '^2.1.0',
       },
     },
@@ -22,7 +22,7 @@ export const testing: ComponentCategory = {
       description: '流行的 JavaScript 测试框架',
       dependencies: {},
       devDependencies: {
-        'jest': '^29.7.0',
+        jest: '^29.7.0',
         '@types/jest': '^29.5.14',
         'ts-jest': '^29.2.5',
       },
@@ -42,7 +42,7 @@ export const testing: ComponentCategory = {
       description: 'E2E 测试框架',
       dependencies: {},
       devDependencies: {
-        'cypress': '^13.15.0',
+        cypress: '^13.15.0',
       },
     },
     {

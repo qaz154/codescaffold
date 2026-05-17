@@ -5,7 +5,6 @@ import {
   TemplateError,
   GenerationError,
   formatError,
-  handleCLIError,
   ERROR_MESSAGES,
 } from './errors';
 

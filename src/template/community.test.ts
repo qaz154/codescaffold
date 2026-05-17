@@ -23,11 +23,15 @@ describe('Community Templates', () => {
     });
 
     it('should reject invalid owner characters', async () => {
-      await expect(fetchTemplateFromGitHub('github:us er/repo')).rejects.toThrow('无效的 GitHub 用户名格式');
+      await expect(fetchTemplateFromGitHub('github:us er/repo')).rejects.toThrow(
+        '无效的 GitHub 用户名格式'
+      );
     });
 
     it('should reject invalid repo characters', async () => {
-      await expect(fetchTemplateFromGitHub('github:user/re po')).rejects.toThrow('无效的 GitHub 仓库名格式');
+      await expect(fetchTemplateFromGitHub('github:user/re po')).rejects.toThrow(
+        '无效的 GitHub 仓库名格式'
+      );
     });
 
     it('should accept valid owner with dots and hyphens', async () => {

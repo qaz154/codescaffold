@@ -14,7 +14,7 @@ export const databases: ComponentCategory = {
         '@prisma/client': '^5.22.0',
       },
       devDependencies: {
-        'prisma': '^5.22.0',
+        prisma: '^5.22.0',
       },
     },
     {
@@ -25,7 +25,7 @@ export const databases: ComponentCategory = {
         '@prisma/client': '^5.22.0',
       },
       devDependencies: {
-        'prisma': '^5.22.0',
+        prisma: '^5.22.0',
       },
     },
     {
@@ -34,7 +34,7 @@ export const databases: ComponentCategory = {
       description: 'TypeScript 优先的 ORM + PostgreSQL',
       dependencies: {
         'drizzle-orm': '^0.36.0',
-        'postgres': '^3.4.0',
+        postgres: '^3.4.0',
       },
       devDependencies: {
         'drizzle-kit': '^0.28.0',

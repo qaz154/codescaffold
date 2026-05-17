@@ -11,12 +11,12 @@ export const ui: ComponentCategory = {
       name: 'Tailwind + shadcn/ui',
       description: '原子化 CSS + 现代组件库',
       dependencies: {
-        'tailwindcss': '^3.4.0',
-        'postcss': '^8.4.0',
-        'autoprefixer': '^10.4.0',
+        tailwindcss: '^3.4.0',
+        postcss: '^8.4.0',
+        autoprefixer: '^10.4.0',
         '@radix-ui/react-slot': '^1.1.0',
         'class-variance-authority': '^0.7.0',
-        'clsx': '^2.1.0',
+        clsx: '^2.1.0',
         'tailwind-merge': '^2.5.0',
         'lucide-react': '^0.460.0',
       },
@@ -26,9 +26,9 @@ export const ui: ComponentCategory = {
       name: 'Tailwind CSS',
       description: '原子化 CSS 框架',
       dependencies: {
-        'tailwindcss': '^3.4.0',
-        'postcss': '^8.4.0',
-        'autoprefixer': '^10.4.0',
+        tailwindcss: '^3.4.0',
+        postcss: '^8.4.0',
+        autoprefixer: '^10.4.0',
       },
     },
     {
@@ -46,7 +46,7 @@ export const ui: ComponentCategory = {
       name: 'Ant Design',
       description: '企业级 UI 组件库',
       dependencies: {
-        'antd': '^5.22.0',
+        antd: '^5.22.0',
         '@ant-design/icons': '^5.5.0',
       },
     },

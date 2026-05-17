@@ -75,7 +75,8 @@ export function handleCLIError(error: unknown): void {
 export const ERROR_MESSAGES = {
   INVALID_PROJECT_NAME: {
     message: 'Invalid project name',
-    suggestion: 'Use only letters, numbers, hyphens, and underscores. Cannot start or end with hyphen/dot.',
+    suggestion:
+      'Use only letters, numbers, hyphens, and underscores. Cannot start or end with hyphen/dot.',
   },
   TEMPLATE_NOT_FOUND: (name: string) => ({
     message: `Template "${name}" not found`,

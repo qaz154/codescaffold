@@ -6,12 +6,15 @@ interface NpmPackageInfo {
   version: string;
 }
 
-export async function checkForUpdates(): Promise<{ hasUpdate: boolean; latestVersion: string } | null> {
+export async function checkForUpdates(): Promise<{
+  hasUpdate: boolean;
+  latestVersion: string;
+} | null> {
   try {
     const response = await fetch('https://registry.npmjs.org/codescaffold/latest', {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       signal: AbortSignal.timeout(5000),
     });
@@ -49,9 +52,21 @@ function compareVersions(a: string, b: string): number {
 export function printUpdateNotice(latestVersion: string): void {
   console.log();
   console.log(chalk.yellow('┌─────────────────────────────────────────────────────────────┐'));
-  console.log(chalk.yellow('│') + chalk.bold.yellow('  A new version of CodeScaffold is available!                ') + chalk.yellow('│'));
-  console.log(chalk.yellow('│') + chalk.dim(`  Current: ${version.padEnd(12)} Latest: ${latestVersion.padEnd(12)}    `) + chalk.yellow('│'));
-  console.log(chalk.yellow('│') + chalk.cyan('  Run: npm update -g codescaffold                            ') + chalk.yellow('│'));
+  console.log(
+    chalk.yellow('│') +
+      chalk.bold.yellow('  A new version of CodeScaffold is available!                ') +
+      chalk.yellow('│')
+  );
+  console.log(
+    chalk.yellow('│') +
+      chalk.dim(`  Current: ${version.padEnd(12)} Latest: ${latestVersion.padEnd(12)}    `) +
+      chalk.yellow('│')
+  );
+  console.log(
+    chalk.yellow('│') +
+      chalk.cyan('  Run: npm update -g codescaffold                            ') +
+      chalk.yellow('│')
+  );
   console.log(chalk.yellow('└─────────────────────────────────────────────────────────────┘'));
   console.log();
 }

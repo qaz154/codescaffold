@@ -30,7 +30,9 @@ export function printPerformanceReport(): void {
     const duration = durations.get(item.name);
     if (duration !== undefined) {
       const status = duration < item.target ? chalk.green('✓') : chalk.yellow('⚠');
-      console.log(`  ${status} ${item.name}: ${chalk.cyan(`${duration}ms`)} (目标: < ${item.target}ms)`);
+      console.log(
+        `  ${status} ${item.name}: ${chalk.cyan(`${duration}ms`)} (目标: < ${item.target}ms)`
+      );
     }
   }
 }

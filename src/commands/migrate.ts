@@ -33,14 +33,13 @@ export async function migrateCommand(options: MigrateOptions): Promise<void> {
     console.log(chalk.gray(`源项目类型: ${sourceType || '未知'}`));
 
     // 选择目标框架
-    const targetFramework = options.framework || await selectTargetFramework(sourceType);
+    const targetFramework = options.framework || (await selectTargetFramework(sourceType));
 
     // 执行迁移
     const result = await migrateProject(sourcePath, targetFramework, options);
 
     // 显示结果
     printMigrationResult(result);
-
   } catch (error) {
     handleCLIError(error);
     process.exit(1);
@@ -49,8 +48,10 @@ export async function migrateCommand(options: MigrateOptions): Promise<void> {
 
 function detectProjectType(projectPath: string): string | null {
   // 检查 Next.js
-  if (fs.existsSync(path.join(projectPath, 'next.config.js')) ||
-      fs.existsSync(path.join(projectPath, 'next.config.ts'))) {
+  if (
+    fs.existsSync(path.join(projectPath, 'next.config.js')) ||
+    fs.existsSync(path.join(projectPath, 'next.config.ts'))
+  ) {
     return 'nextjs';
   }
 
@@ -67,8 +68,10 @@ function detectProjectType(projectPath: string): string | null {
   }
 
   // 检查 Python
-  if (fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
-      fs.existsSync(path.join(projectPath, 'pyproject.toml'))) {
+  if (
+    fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
+    fs.existsSync(path.join(projectPath, 'pyproject.toml'))
+  ) {
     return 'python';
   }
 
@@ -80,7 +83,7 @@ function detectProjectType(projectPath: string): string | null {
   return null;
 }
 
-async function selectTargetFramework(sourceType: string | null): Promise<string> {
+async function selectTargetFramework(_sourceType: string | null): Promise<string> {
   const inquirer = await import('inquirer');
 
   const choices = [
@@ -151,7 +154,6 @@ async function migrateProject(
     }
 
     spinner.succeed(chalk.green('迁移完成'));
-
   } catch (error) {
     spinner.fail(chalk.red('迁移失败'));
     result.errors.push((error as Error).message);

@@ -23,7 +23,9 @@ export interface CodeGenerationResponse {
 export const GeneratedFileSchema = z.object({
   path: z.string().min(1, 'File path is required'),
   content: z.string().min(1, 'File content is required'),
-  language: z.enum(['typescript', 'javascript', 'python', 'go', 'prisma', 'yaml', 'json']).optional(),
+  language: z
+    .enum(['typescript', 'javascript', 'python', 'go', 'prisma', 'yaml', 'json'])
+    .optional(),
 });
 
 export const SchemaUpdateSchema = z.object({
@@ -44,7 +46,9 @@ export function parseLLMResponse(content: string): CodeGenerationResponse {
   let jsonStr = content.trim();
 
   // Remove markdown code blocks if present
-  const codeBlockMatch = jsonStr.match(/```(?:json|typescript|ts|javascript|js|python|go|bash)?\s*([\s\S]*?)```/);
+  const codeBlockMatch = jsonStr.match(
+    /```(?:json|typescript|ts|javascript|js|python|go|bash)?\s*([\s\S]*?)```/
+  );
   if (codeBlockMatch) {
     jsonStr = codeBlockMatch[1].trim();
   }
@@ -54,20 +58,22 @@ export function parseLLMResponse(content: string): CodeGenerationResponse {
   try {
     parsed = JSON.parse(jsonStr);
   } catch (error) {
-    throw new Error(`Failed to parse LLM response as JSON: ${(error as Error).message}\nContent: ${jsonStr.slice(0, 500)}`);
+    throw new Error(
+      `Failed to parse LLM response as JSON: ${(error as Error).message}\nContent: ${jsonStr.slice(0, 500)}`
+    );
   }
 
   // Validate with Zod
   const result = CodeGenerationResponseSchema.safeParse(parsed);
   if (!result.success) {
-    const errors = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(', ');
+    const errors = result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', ');
     throw new Error(`Invalid LLM response structure: ${errors}`);
   }
 
   // Ensure language is always set on files
   const response: CodeGenerationResponse = {
     ...result.data,
-    files: result.data.files.map((f) => ({
+    files: result.data.files.map(f => ({
       ...f,
       language: f.language || detectLanguageFromPath(f.path),
     })),
@@ -113,9 +119,15 @@ const PLACEHOLDER_PATTERNS = [
   { pattern: /\bundefined\b(?![\w])/, message: 'Contains undefined value' },
   { pattern: /\bnull\b(?![\w])/, message: 'Contains null - may cause runtime errors' },
   { pattern: /\bconsole\.log\b/, message: 'Contains console.log - remove for production' },
-  { pattern: /password\s*=\s*['"][^'"]+['"]/i, message: 'Contains hardcoded password - security risk' },
+  {
+    pattern: /password\s*=\s*['"][^'"]+['"]/i,
+    message: 'Contains hardcoded password - security risk',
+  },
   { pattern: /secret\s*=\s*['"][^'"]+['"]/i, message: 'Contains hardcoded secret - security risk' },
-  { pattern: /apiKey\s*=\s*['"][^'"]+['"]/i, message: 'Contains hardcoded API key - security risk' },
+  {
+    pattern: /apiKey\s*=\s*['"][^'"]+['"]/i,
+    message: 'Contains hardcoded API key - security risk',
+  },
 ];
 
 // SQL injection patterns
@@ -177,7 +189,9 @@ export function validateGeneratedCode(code: string, language: GeneratedFile['lan
         indentLevels.set('level_' + spaces, (indentLevels.get('level_' + spaces) || 0) + 1);
       }
       // Python should have consistent indentation (4 spaces typical)
-      const maxIndent = Math.max(...Array.from(indentLevels.keys()).map(k => parseInt(k.split('_')[1])));
+      const maxIndent = Math.max(
+        ...Array.from(indentLevels.keys()).map(k => parseInt(k.split('_')[1]))
+      );
       if (maxIndent > 8) {
         errors.push(`Inconsistent or excessive indentation detected (max: ${maxIndent})`);
       }

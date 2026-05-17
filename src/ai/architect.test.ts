@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { recommendArchitecture, ArchitectureRecommendation } from './architect';
+import { recommendArchitecture } from './architect';
 import { AnalysisResult } from './analyzer';
 
 describe('recommendArchitecture', () => {

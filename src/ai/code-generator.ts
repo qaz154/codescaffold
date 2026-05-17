@@ -4,7 +4,13 @@ import path from 'path';
 import ora from 'ora';
 import { getAIService } from './openai-service';
 import { getPromptTemplate, renderUserPrompt } from './prompts';
-import { parseLLMResponse, GeneratedFile, CodeGenerationResponse, validateGeneratedCode, detectLanguageFromPath } from './output-parser';
+import {
+  parseLLMResponse,
+  GeneratedFile,
+  CodeGenerationResponse,
+  validateGeneratedCode,
+  detectLanguageFromPath,
+} from './output-parser';
 import { FileMapping, ProjectType } from './file-mapper';
 
 export interface GenerationContext {
@@ -57,14 +63,18 @@ export class CodeGeneratorService {
         continue;
       }
 
-      spinner.text = chalk.cyan(`Generating ${mapping.promptKey}... (${processedCount + 1}/${totalMappings})`);
+      spinner.text = chalk.cyan(
+        `Generating ${mapping.promptKey}... (${processedCount + 1}/${totalMappings})`
+      );
 
       try {
         const { files, warnings } = await this.generateFile(mapping, context);
         result.files.push(...files);
         result.warnings.push(...warnings);
         processedCount++;
-        spinner.text = chalk.cyan(`Generated ${processedCount}/${totalMappings}: ${mapping.promptKey}`);
+        spinner.text = chalk.cyan(
+          `Generated ${processedCount}/${totalMappings}: ${mapping.promptKey}`
+        );
       } catch (error) {
         const errorMsg = `Failed to generate ${mapping.promptKey}: ${(error as Error).message}`;
         result.errors.push(errorMsg);
@@ -113,11 +123,12 @@ export class CodeGeneratorService {
           template.outputSchema
         );
 
-        const parsedResponse = typeof response === 'string'
-          ? parseLLMResponse(response)
-          : response as CodeGenerationResponse;
+        const parsedResponse =
+          typeof response === 'string'
+            ? parseLLMResponse(response)
+            : (response as CodeGenerationResponse);
 
-        const files = parsedResponse.files.map((f) => ({
+        const files = parsedResponse.files.map(f => ({
           ...f,
           language: f.language || detectLanguageFromPath(f.path),
         }));
@@ -148,7 +159,7 @@ export class CodeGeneratorService {
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private buildEntitiesFromFeatures(features: string[]): string {
@@ -165,10 +176,7 @@ export class CodeGeneratorService {
     return entities.join('\n');
   }
 
-  async writeGeneratedFiles(
-    files: GeneratedFile[],
-    outputDir: string
-  ): Promise<void> {
+  async writeGeneratedFiles(files: GeneratedFile[], outputDir: string): Promise<void> {
     for (const file of files) {
       const filePath = path.join(outputDir, file.path);
       const dir = path.dirname(filePath);

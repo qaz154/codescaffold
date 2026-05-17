@@ -25,38 +25,23 @@ const TEMPLATE_FILES: Record<string, string[]> = {
     'src/middleware',
     'Dockerfile',
   ],
-  'nextjs-fullstack': [
-    'package.json',
-    'next.config.ts',
-    'app',
-    'lib',
-    'prisma',
-    'Dockerfile',
-  ],
-  'python-fastapi': [
-    'requirements.txt',
-    'pyproject.toml',
-    'app',
-    'tests',
-    'Dockerfile',
-  ],
-  'go-microservice': [
-    'go.mod',
-    'go.sum',
-    'cmd',
-    'internal',
-    'Dockerfile',
-  ],
+  'nextjs-fullstack': ['package.json', 'next.config.ts', 'app', 'lib', 'prisma', 'Dockerfile'],
+  'python-fastapi': ['requirements.txt', 'pyproject.toml', 'app', 'tests', 'Dockerfile'],
+  'go-microservice': ['go.mod', 'go.sum', 'cmd', 'internal', 'Dockerfile'],
 };
 
 function detectTemplate(projectDir: string): string | null {
-  if (fs.existsSync(path.join(projectDir, 'next.config.ts')) ||
-      fs.existsSync(path.join(projectDir, 'next.config.js'))) {
+  if (
+    fs.existsSync(path.join(projectDir, 'next.config.ts')) ||
+    fs.existsSync(path.join(projectDir, 'next.config.js'))
+  ) {
     return 'nextjs-fullstack';
   }
 
-  if (fs.existsSync(path.join(projectDir, 'requirements.txt')) &&
-      fs.existsSync(path.join(projectDir, 'pyproject.toml'))) {
+  if (
+    fs.existsSync(path.join(projectDir, 'requirements.txt')) &&
+    fs.existsSync(path.join(projectDir, 'pyproject.toml'))
+  ) {
     return 'python-fastapi';
   }
 
@@ -64,8 +49,10 @@ function detectTemplate(projectDir: string): string | null {
     return 'go-microservice';
   }
 
-  if (fs.existsSync(path.join(projectDir, 'tsconfig.json')) &&
-      fs.existsSync(path.join(projectDir, 'package.json'))) {
+  if (
+    fs.existsSync(path.join(projectDir, 'tsconfig.json')) &&
+    fs.existsSync(path.join(projectDir, 'package.json'))
+  ) {
     return 'express-api';
   }
 
@@ -169,10 +156,12 @@ async function runChecks(projectDir: string, template: string): Promise<Validati
   checks.push({
     name: 'No hardcoded secrets',
     passed: !hasHardcodedSecrets,
-    message: hasHardcodedSecrets ? 'WARNING: Potential hardcoded secrets found' : 'No hardcoded secrets detected',
+    message: hasHardcodedSecrets
+      ? 'WARNING: Potential hardcoded secrets found'
+      : 'No hardcoded secrets detected',
   });
 
-  const allPassed = checks.every((c) => c.passed);
+  const allPassed = checks.every(c => c.passed);
   return { passed: allPassed, checks };
 }
 
@@ -201,7 +190,7 @@ async function checkForHardcodedSecrets(projectDir: string): Promise<boolean> {
 
         if (entry.isDirectory()) {
           scanDir(fullPath, depth + 1);
-        } else if (codeExtensions.some((ext) => entry.name.endsWith(ext))) {
+        } else if (codeExtensions.some(ext => entry.name.endsWith(ext))) {
           filesToCheck.push(fullPath);
         }
       }
@@ -265,7 +254,7 @@ export async function validateCommand(options: { directory?: string }): Promise<
 
     console.log();
 
-    const passedCount = result.checks.filter((c) => c.passed).length;
+    const passedCount = result.checks.filter(c => c.passed).length;
     const totalCount = result.checks.length;
 
     if (result.passed) {
@@ -276,7 +265,6 @@ export async function validateCommand(options: { directory?: string }): Promise<
     }
 
     console.log();
-
   } catch (error) {
     handleCLIError(error);
     process.exit(1);
@@ -291,5 +279,5 @@ export async function quickValidate(projectDir: string): Promise<boolean> {
   }
 
   const requiredFiles = TEMPLATE_FILES[template] || [];
-  return requiredFiles.every((file) => fs.existsSync(path.join(projectDir, file)));
+  return requiredFiles.every(file => fs.existsSync(path.join(projectDir, file)));
 }

@@ -46,7 +46,7 @@ export async function serveCommand(options: ServeOptions) {
       shell: false,
     });
 
-    installProcess.on('close', (code) => {
+    installProcess.on('close', code => {
       if (code !== 0) {
         console.error(chalk.red(`npm install failed with code ${code}`));
         process.exit(1);
@@ -71,15 +71,15 @@ function startServer(port: number, webDir: string) {
     shell: false,
   });
 
-  server.stdout?.on('data', (data) => {
+  server.stdout?.on('data', data => {
     process.stdout.write(data);
   });
 
-  server.stderr?.on('data', (data) => {
+  server.stderr?.on('data', data => {
     process.stderr.write(data);
   });
 
-  server.on('close', (code) => {
+  server.on('close', code => {
     if (code !== 0) {
       console.error(chalk.red(`Server exited with code ${code}`));
     }

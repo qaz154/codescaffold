@@ -19,8 +19,8 @@ export const auth: ComponentCategory = {
       name: 'JWT 自定义',
       description: '基于 jsonwebtoken 的自定义认证',
       dependencies: {
-        'jsonwebtoken': '^9.0.2',
-        'bcryptjs': '^2.4.3',
+        jsonwebtoken: '^9.0.2',
+        bcryptjs: '^2.4.3',
       },
       devDependencies: {
         '@types/jsonwebtoken': '^9.0.7',

@@ -19,13 +19,17 @@ interface UpgradeResult {
 }
 
 function detectTemplate(projectDir: string): string | null {
-  if (fs.existsSync(path.join(projectDir, 'next.config.ts')) ||
-      fs.existsSync(path.join(projectDir, 'next.config.js'))) {
+  if (
+    fs.existsSync(path.join(projectDir, 'next.config.ts')) ||
+    fs.existsSync(path.join(projectDir, 'next.config.js'))
+  ) {
     return 'nextjs-fullstack';
   }
 
-  if (fs.existsSync(path.join(projectDir, 'requirements.txt')) &&
-      fs.existsSync(path.join(projectDir, 'pyproject.toml'))) {
+  if (
+    fs.existsSync(path.join(projectDir, 'requirements.txt')) &&
+    fs.existsSync(path.join(projectDir, 'pyproject.toml'))
+  ) {
     return 'python-fastapi';
   }
 
@@ -33,8 +37,10 @@ function detectTemplate(projectDir: string): string | null {
     return 'go-microservice';
   }
 
-  if (fs.existsSync(path.join(projectDir, 'tsconfig.json')) &&
-      fs.existsSync(path.join(projectDir, 'package.json'))) {
+  if (
+    fs.existsSync(path.join(projectDir, 'tsconfig.json')) &&
+    fs.existsSync(path.join(projectDir, 'package.json'))
+  ) {
     return 'express-api';
   }
 
@@ -206,7 +212,7 @@ export async function upgradeCommand(options: UpgradeOptions): Promise<void> {
         name: 'createBackup',
         message: 'Create backup before upgrading?',
         default: true,
-        when: (answers) => answers.confirmUpgrade,
+        when: answers => answers.confirmUpgrade,
       },
     ]);
 
@@ -215,7 +221,10 @@ export async function upgradeCommand(options: UpgradeOptions): Promise<void> {
       process.exit(0);
     }
 
-    const spinner = ora({ text: chalk.cyan('Upgrading template files...'), spinner: 'dots' }).start();
+    const spinner = ora({
+      text: chalk.cyan('Upgrading template files...'),
+      spinner: 'dots',
+    }).start();
 
     let backupPath: string | null = null;
 
@@ -253,7 +262,6 @@ export async function upgradeCommand(options: UpgradeOptions): Promise<void> {
     }
 
     console.log();
-
   } catch (error) {
     handleCLIError(error);
     process.exit(1);

@@ -71,9 +71,7 @@ export function printRuntimeInfo(): void {
   console.log(chalk.cyan('\n runtime 信息:\n'));
 
   for (const rt of runtimes) {
-    const status = rt.available
-      ? chalk.green(`✓ ${rt.version}`)
-      : chalk.red('✗ 未安装');
+    const status = rt.available ? chalk.green(`✓ ${rt.version}`) : chalk.red('✗ 未安装');
     console.log(`  ${chalk.bold(rt.name.padEnd(8))} ${status}`);
   }
 }

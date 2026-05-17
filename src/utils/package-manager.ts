@@ -63,16 +63,14 @@ export function printPackageManagerInfo(): void {
   console.log(chalk.cyan('\n📦 包管理器:\n'));
 
   for (const m of managers) {
-    const status = m.available
-      ? chalk.green(`✓ ${m.version}`)
-      : chalk.red('✗ 未安装');
+    const status = m.available ? chalk.green(`✓ ${m.version}`) : chalk.red('✗ 未安装');
     console.log(`  ${chalk.bold(m.name.padEnd(8))} ${status}`);
   }
 }
 
 export function selectPackageManager(): PackageManager {
   const managers = detectPackageManagers();
-  const available = managers.filter((m) => m.available);
+  const available = managers.filter(m => m.available);
 
   if (available.length === 0) {
     return 'npm'; // 默认
@@ -81,7 +79,7 @@ export function selectPackageManager(): PackageManager {
   // 优先级: bun > pnpm > yarn > npm
   const priority: PackageManager[] = ['bun', 'pnpm', 'yarn', 'npm'];
   for (const pm of priority) {
-    if (available.some((m) => m.name === pm)) {
+    if (available.some(m => m.name === pm)) {
       return pm;
     }
   }

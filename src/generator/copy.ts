@@ -1,5 +1,4 @@
 import { generateProject } from '../template/generator';
-import { AnalysisResult } from '../ai/analyzer';
 
 export interface CopyOptions {
   projectName: string;
@@ -29,8 +28,8 @@ export function extractProjectName(requirement: string): string {
     .slice(0, 4);
 
   const name = words
-    .map((w) => w.replace(/[-_]+/g, ''))
-    .filter((w) => w.length > 0)
+    .map(w => w.replace(/[-_]+/g, ''))
+    .filter(w => w.length > 0)
     .join('-');
 
   return name || 'my-project';

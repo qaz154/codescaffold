@@ -11,7 +11,7 @@ const DatabaseChoice = z.enum(['postgresql', 'mysql', 'sqlite']);
 type DatabaseChoice = z.infer<typeof DatabaseChoice>;
 
 export interface AIAnalysisResult {
-  projectType: typeof TEMPLATE_CHOICES[number];
+  projectType: (typeof TEMPLATE_CHOICES)[number];
   database: DatabaseChoice;
   features: string[];
   reasoning: string;
@@ -93,18 +93,24 @@ export class AIService {
 
   private getDefaultModel(): string {
     switch (this.provider) {
-      case 'claude': return 'claude-3-5-haiku-20241022';
-      case 'local': return 'llama3.1';
-      default: return 'gpt-4o-mini';
+      case 'claude':
+        return 'claude-3-5-haiku-20241022';
+      case 'local':
+        return 'llama3.1';
+      default:
+        return 'gpt-4o-mini';
     }
   }
 
   private getApiKey(): string | null {
     const env = process.env;
     switch (this.provider) {
-      case 'claude': return env.ANTHROPIC_API_KEY || env.CLAUDE_API_KEY || null;
-      case 'openai': return env.OPENAI_API_KEY || null;
-      default: return null;
+      case 'claude':
+        return env.ANTHROPIC_API_KEY || env.CLAUDE_API_KEY || null;
+      case 'openai':
+        return env.OPENAI_API_KEY || null;
+      default:
+        return null;
     }
   }
 
@@ -162,7 +168,9 @@ export class AIService {
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new Error(`AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`);
+        throw new Error(
+          `AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`
+        );
       }
       throw error;
     }
@@ -200,9 +208,7 @@ export class AIService {
       model: this.model,
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      messages: [
-        { role: 'user', content: userPrompt },
-      ],
+      messages: [{ role: 'user', content: userPrompt }],
     });
 
     const content = response.content[0];
@@ -242,7 +248,9 @@ export class AIService {
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new Error(`AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`);
+        throw new Error(
+          `AI response validation failed: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`
+        );
       }
       throw error;
     }
@@ -282,9 +290,7 @@ export class AIService {
       model: this.model,
       max_tokens: 4096,
       system: systemPrompt,
-      messages: [
-        { role: 'user', content: userPrompt },
-      ],
+      messages: [{ role: 'user', content: userPrompt }],
     });
 
     const content = response.content[0];

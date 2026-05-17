@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import { loadConfig, createDefaultConfig, printConfigInfo, Config } from '../utils/config';
+import { loadConfig, createDefaultConfig, printConfigInfo } from '../utils/config';
 
 export interface ConfigOptions {
   init?: boolean;

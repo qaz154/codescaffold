@@ -1,17 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { runQualityChecks } from './quality-gate';
-import path from 'path';
 
 describe('Quality Gate', () => {
   it('should detect missing package.json', () => {
     const result = runQualityChecks('/tmp');
-    const pkgCheck = result.checks.find((c) => c.name === 'package.json');
+    const pkgCheck = result.checks.find(c => c.name === 'package.json');
     expect(pkgCheck?.passed).toBe(false);
   });
 
   it('should detect missing README', () => {
     const result = runQualityChecks('/tmp');
-    const readmeCheck = result.checks.find((c) => c.name === 'README.md');
+    const readmeCheck = result.checks.find(c => c.name === 'README.md');
     expect(readmeCheck?.passed).toBe(false);
   });
 

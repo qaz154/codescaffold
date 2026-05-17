@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeRequirements, AnalysisResult } from './analyzer';
+import { analyzeRequirements } from './analyzer';
 
 describe('analyzeRequirements', () => {
   it('should detect Next.js fullstack project', () => {

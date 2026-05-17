@@ -2,9 +2,21 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import path from 'path';
 import { handleCLIError } from '../utils/errors';
-import { ComponentCategory, ComponentOption, ProjectConfig, frameworks, databases, auth, ui } from '../components';
+import {
+  ComponentCategory,
+  ComponentOption,
+  ProjectConfig,
+  frameworks,
+  databases,
+  auth,
+  ui,
+} from '../components';
 import { loadPreferences, updatePreferences } from '../utils/preferences';
-import { checkCompatibility, printCompatibilityResult, getRecommendedComponents } from '../components/dependencies';
+import {
+  checkCompatibility,
+  printCompatibilityResult,
+  getRecommendedComponents,
+} from '../components/dependencies';
 import { printProjectPreview } from '../components/preview';
 
 interface ComposeOptions {
@@ -44,7 +56,6 @@ export async function composeCommand(options: ComposeOptions): Promise<void> {
     }
 
     await generateProject(config, options);
-
   } catch (error) {
     handleCLIError(error);
     process.exit(1);
@@ -71,7 +82,8 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
           name: 'name',
           message: '项目名称:',
           default: 'my-project',
-          validate: (input) => /^[a-zA-Z0-9_-]+$/.test(input) || '项目名称只能包含字母、数字、下划线和连字符',
+          validate: input =>
+            /^[a-zA-Z0-9_-]+$/.test(input) || '项目名称只能包含字母、数字、下划线和连字符',
         },
       ]);
       name = answer.name;
@@ -154,20 +166,22 @@ async function selectComponent(
   const recommendations = framework ? getRecommendedComponents(framework) : null;
   const recommendedIds = recommendations?.[category.id as keyof typeof recommendations] || [];
 
-  const choices: Array<{ name: string; value: ComponentOption | null }> = category.options.map((opt) => {
-    const isRecommended = recommendedIds.includes(opt.id);
-    const name = isRecommended
-      ? `${opt.name} - ${opt.description} ${chalk.green('(推荐)')}`
-      : `${opt.name} - ${opt.description}`;
-    return { name, value: opt };
-  });
+  const choices: Array<{ name: string; value: ComponentOption | null }> = category.options.map(
+    opt => {
+      const isRecommended = recommendedIds.includes(opt.id);
+      const name = isRecommended
+        ? `${opt.name} - ${opt.description} ${chalk.green('(推荐)')}`
+        : `${opt.name} - ${opt.description}`;
+      return { name, value: opt };
+    }
+  );
 
   if (!category.required) {
     choices.push({ name: '跳过', value: null });
   }
 
   const defaultIndex = lastChoice
-    ? choices.findIndex((c) => c.value && c.value.id === lastChoice)
+    ? choices.findIndex(c => c.value && c.value.id === lastChoice)
     : -1;
 
   const answer = await inquirer.prompt([

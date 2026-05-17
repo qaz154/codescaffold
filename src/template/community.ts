@@ -45,7 +45,7 @@ export function saveCommunityTemplates(templates: CommunityTemplate[]): void {
 
 export function addCommunityTemplate(template: CommunityTemplate): void {
   const templates = loadCommunityTemplates();
-  const existing = templates.findIndex((t) => t.name === template.name);
+  const existing = templates.findIndex(t => t.name === template.name);
 
   if (existing >= 0) {
     templates[existing] = template;
@@ -59,7 +59,7 @@ export function addCommunityTemplate(template: CommunityTemplate): void {
 
 export function removeCommunityTemplate(name: string): boolean {
   const templates = loadCommunityTemplates();
-  const filtered = templates.filter((t) => t.name !== name);
+  const filtered = templates.filter(t => t.name !== name);
 
   if (filtered.length === templates.length) {
     return false;
@@ -70,9 +70,9 @@ export function removeCommunityTemplate(name: string): boolean {
   return true;
 }
 
-export function updateTemplateVersion(name: string, version: string, changes: string[]): boolean {
+export function updateTemplateVersion(name: string, version: string, _changes: string[]): boolean {
   const templates = loadCommunityTemplates();
-  const template = templates.find((t) => t.name === name);
+  const template = templates.find(t => t.name === name);
 
   if (!template) {
     return false;
@@ -88,7 +88,7 @@ export function updateTemplateVersion(name: string, version: string, changes: st
 
 export function getTemplateVersions(name: string): TemplateVersion[] {
   const templates = loadCommunityTemplates();
-  const template = templates.find((t) => t.name === name);
+  const template = templates.find(t => t.name === name);
 
   if (!template) {
     return [];
@@ -109,10 +109,10 @@ export function searchTemplates(query: string): CommunityTemplate[] {
   const lowerQuery = query.toLowerCase();
 
   return templates.filter(
-    (t) =>
+    t =>
       t.name.toLowerCase().includes(lowerQuery) ||
       t.description.toLowerCase().includes(lowerQuery) ||
-      t.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
+      t.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
   );
 }
 

@@ -91,7 +91,9 @@ export async function generateProject(config: ProjectConfig): Promise<string> {
   const templateDir = path.join(__dirname, '../../templates', config.template);
 
   if (!fs.existsSync(templateDir)) {
-    throw new Error(`Template "${config.template}" not found. Run "codescaffold list" to see available templates.`);
+    throw new Error(
+      `Template "${config.template}" not found. Run "codescaffold list" to see available templates.`
+    );
   }
 
   const projectDir = path.join(safeOutputPath, config.name);
@@ -99,7 +101,9 @@ export async function generateProject(config: ProjectConfig): Promise<string> {
   if (fs.existsSync(projectDir) && !config.force) {
     const files = fs.readdirSync(projectDir);
     if (files.length > 0) {
-      throw new Error(`Directory "${projectDir}" already exists and is not empty. Use --force to overwrite.`);
+      throw new Error(
+        `Directory "${projectDir}" already exists and is not empty. Use --force to overwrite.`
+      );
     }
   }
 

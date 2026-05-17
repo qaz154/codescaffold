@@ -105,7 +105,7 @@ export async function selectVariant(
       type: 'list',
       name: 'variant',
       message: 'Select a template variant:',
-      choices: variants.map((v) => ({
+      choices: variants.map(v => ({
         name: `${v.name} - ${v.description}`,
         value: v.id,
       })),
@@ -118,6 +118,6 @@ export async function selectVariant(
 
 export function getVariantFeatures(template: string, variantId: string): string[] {
   const variants = TEMPLATE_VARIANTS[template];
-  const variant = variants?.find((v) => v.id === variantId);
+  const variant = variants?.find(v => v.id === variantId);
   return variant?.features || [];
 }

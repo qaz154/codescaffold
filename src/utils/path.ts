@@ -10,20 +10,42 @@ export class PathValidationError extends ValidationError {
 
 const PROTECTED_PREFIXES = [
   // Unix system paths
-  '/etc', '/sys', '/proc', '/dev', '/boot', '/lib', '/lib64', '/sbin',
-  '/root', '/mnt', '/opt', '/srv', '/run', '/var', '/usr',
+  '/etc',
+  '/sys',
+  '/proc',
+  '/dev',
+  '/boot',
+  '/lib',
+  '/lib64',
+  '/sbin',
+  '/root',
+  '/mnt',
+  '/opt',
+  '/srv',
+  '/run',
+  '/var',
+  '/usr',
   // Windows system paths (case-insensitive matching applied at runtime)
-  'c:\\windows', 'c:\\program files', 'c:\\program files (x86)', 'c:\\programdata',
+  'c:\\windows',
+  'c:\\program files',
+  'c:\\program files (x86)',
+  'c:\\programdata',
   'c:\\users\\default',
   // macOS
-  '/system', '/library', '/applications',
+  '/system',
+  '/library',
+  '/applications',
 ];
 
 function isProtectedPath(normalizedPath: string): boolean {
   const lower = normalizedPath.toLowerCase();
   for (const prefix of PROTECTED_PREFIXES) {
     const prefixLower = prefix.toLowerCase();
-    if (lower === prefixLower || lower.startsWith(prefixLower + '/') || lower.startsWith(prefixLower + '\\')) {
+    if (
+      lower === prefixLower ||
+      lower.startsWith(prefixLower + '/') ||
+      lower.startsWith(prefixLower + '\\')
+    ) {
       return true;
     }
   }
@@ -84,8 +106,5 @@ export function validateProjectName(name: string): void {
 const DANGEROUS_FILENAME_CHARS = /[<>"?*\x00-\x1f]/g;
 
 export function sanitizeFileName(name: string): string {
-  return name
-    .replace(DANGEROUS_FILENAME_CHARS, '')
-    .replace(/\.\./g, '')
-    .trim();
+  return name.replace(DANGEROUS_FILENAME_CHARS, '').replace(/\.\./g, '').trim();
 }

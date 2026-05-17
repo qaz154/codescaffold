@@ -10,10 +10,15 @@ export const ConfigSchema = z.object({
   baseURL: z.string().optional(),
   defaultTemplate: z.string().optional(),
   defaultOutput: z.string().optional(),
-  templates: z.record(z.string(), z.object({
-    enabled: z.boolean().optional(),
-    overrides: z.record(z.string(), z.string()).optional(),
-  })).optional(),
+  templates: z
+    .record(
+      z.string(),
+      z.object({
+        enabled: z.boolean().optional(),
+        overrides: z.record(z.string(), z.string()).optional(),
+      })
+    )
+    .optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;
@@ -62,7 +67,11 @@ export function loadConfig(configPath?: string): Config | null {
     const content = fs.readFileSync(filePath, 'utf-8');
 
     if (filePath.endsWith('.yaml') || filePath.endsWith('.yml')) {
-      console.log(chalk.yellow('Warning: YAML config files require js-yaml. Using JSON format is recommended.'));
+      console.log(
+        chalk.yellow(
+          'Warning: YAML config files require js-yaml. Using JSON format is recommended.'
+        )
+      );
       return null;
     }
 

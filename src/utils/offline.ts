@@ -27,7 +27,10 @@ export function ensureCacheDir(): void {
 export function cacheTemplate(name: string, content: string): void {
   ensureCacheDir();
   const cachePath = path.join(CACHE_DIR, `${name}.json`);
-  fs.writeFileSync(cachePath, JSON.stringify({ name, content, cachedAt: new Date().toISOString() }));
+  fs.writeFileSync(
+    cachePath,
+    JSON.stringify({ name, content, cachedAt: new Date().toISOString() })
+  );
 }
 
 export function getCachedTemplate(name: string): string | null {
@@ -50,9 +53,7 @@ export function listCachedTemplates(): string[] {
 
   try {
     const files = fs.readdirSync(CACHE_DIR);
-    return files
-      .filter((f) => f.endsWith('.json'))
-      .map((f) => f.replace('.json', ''));
+    return files.filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''));
   } catch {
     return [];
   }

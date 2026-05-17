@@ -61,7 +61,8 @@ export function printSuggestions(suggestions: SmartSuggestion[]): void {
 
   for (const s of suggestions) {
     const confidence = Math.round(s.confidence * 100);
-    const bar = '█'.repeat(Math.floor(confidence / 10)) + '░'.repeat(10 - Math.floor(confidence / 10));
+    const bar =
+      '█'.repeat(Math.floor(confidence / 10)) + '░'.repeat(10 - Math.floor(confidence / 10));
     console.log(`  ${chalk.bold(s.feature)}`);
     console.log(`    ${chalk.dim(s.reason)}`);
     console.log(`    ${chalk.cyan(bar)} ${chalk.dim(`${confidence}%`)}`);
@@ -84,7 +85,7 @@ ${config.ui ? `- **UI**: ${config.ui.name}` : ''}
 
 ## 智能建议
 
-${suggestions.map((s) => `- **${s.feature}**: ${s.reason}`).join('\n')}
+${suggestions.map(s => `- **${s.feature}**: ${s.reason}`).join('\n')}
 
 ## 开始
 

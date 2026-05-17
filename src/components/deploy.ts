@@ -12,10 +12,14 @@ export const deploy: ComponentCategory = {
       description: 'Next.js 官方部署平台',
       dependencies: {},
       configFiles: {
-        'vercel.json': JSON.stringify({
-          version: 2,
-          builds: [{ src: 'package.json', use: '@vercel/node' }],
-        }, null, 2),
+        'vercel.json': JSON.stringify(
+          {
+            version: 2,
+            builds: [{ src: 'package.json', use: '@vercel/node' }],
+          },
+          null,
+          2
+        ),
       },
     },
     {
@@ -57,7 +61,7 @@ export const deploy: ComponentCategory = {
       description: '容器化部署',
       dependencies: {},
       configFiles: {
-        'Dockerfile': `FROM node:18-alpine
+        Dockerfile: `FROM node:18-alpine
 
 WORKDIR /app
 

@@ -27,7 +27,10 @@ export interface FileMapperConfig {
 }
 
 class ConfigLoadError extends Error {
-  constructor(message: string, public cause?: Error) {
+  constructor(
+    message: string,
+    public cause?: Error
+  ) {
     super(message);
     this.name = 'ConfigLoadError';
   }
@@ -53,7 +56,10 @@ function loadConfig(): FileMapperConfig {
     if (error instanceof ConfigLoadError) {
       throw error;
     }
-    throw new ConfigLoadError(`Failed to parse configuration: ${(error as Error).message}`, error as Error);
+    throw new ConfigLoadError(
+      `Failed to parse configuration: ${(error as Error).message}`,
+      error as Error
+    );
   }
 }
 
@@ -67,7 +73,9 @@ function getConfig(): FileMapperConfig {
   }
 
   if (configLoadAttempted) {
-    throw new GenerationError('Configuration failed to load previously. Check features.json exists.');
+    throw new GenerationError(
+      'Configuration failed to load previously. Check features.json exists.'
+    );
   }
 
   configLoadAttempted = true;
@@ -79,10 +87,7 @@ export function getFilesToCopy(projectType: ProjectType): FileMapping[] {
   return getConfig()[projectType]?.baseFiles || [];
 }
 
-export function getFilesForFeatures(
-  projectType: ProjectType,
-  features: string[]
-): FileMapping[] {
+export function getFilesForFeatures(projectType: ProjectType, features: string[]): FileMapping[] {
   const config = getConfig()[projectType];
   if (!config) return [];
 
@@ -108,8 +113,5 @@ export function getAllFilesForGeneration(
   projectType: ProjectType,
   features: string[]
 ): FileMapping[] {
-  return [
-    ...getFilesToCopy(projectType),
-    ...getFilesForFeatures(projectType, features),
-  ];
+  return [...getFilesToCopy(projectType), ...getFilesForFeatures(projectType, features)];
 }
