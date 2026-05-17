@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.01] - 2026-05-18
+
+### Fixed
+
+#### Dependencies
+- **ESM compatibility**: Upgraded chalk@5, boxen@7, ora@8, inquirer@9 (all ESM-only)
+- **ESLint broken**: Added missing @typescript-eslint/eslint-plugin and @typescript-eslint/parser
+
+#### CI/CD
+- **ESLint not running**: CI now runs ESLint, Prettier, and TypeScript checks
+- **E2E test order**: Fixed test job to build before running E2E tests
+- **Playwright setup**: Added browser installation step for E2E tests
+
+### Changed
+
+#### Code Quality
+- **Unused imports**: Removed 16 unused import/variable errors
+- **Console rules**: Disabled no-console rule (CLI tool needs console output)
+- **Formatting**: Formatted all source files with Prettier
+- **React version**: Aligned React@19 between web/ and generated templates
+
+#### Documentation
+- **CONTRIBUTING.md**: Updated dev setup and testing instructions
+
 ## [1.15.0] - 2026-05-13
 
 ### Changed
