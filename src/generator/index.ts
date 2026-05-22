@@ -1,15 +1,19 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import { analyzeRequirements, formatAnalysisReport, AnalysisResult } from '../ai/analyzer';
+import { analyzeRequirements, formatAnalysisReport, AnalysisResult } from '../ai/analyzer.js';
 import {
   recommendArchitecture,
   formatArchitectureReport,
   ArchitectureRecommendation,
-} from '../ai/architect';
-import { getAIService, AIAnalysisResult } from '../ai/openai-service';
-import { copyTemplate, extractProjectName } from './copy';
-import { generateCustomCode, logGenerationResult } from './generate';
+} from '../ai/architect.js';
+import { getAIService, AIAnalysisResult } from '../ai/openai-service.js';
+import { copyTemplate, extractProjectName } from './copy.js';
+import { generateCustomCode, logGenerationResult } from './generate.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export interface AIGenerateOptions {
   requirement: string;

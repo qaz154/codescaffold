@@ -3,7 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import inquirer from 'inquirer';
 import ora from 'ora';
-import { handleCLIError } from '../utils/errors';
+import { handleCLIError } from '../utils/errors.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface UpgradeOptions {
   directory?: string;

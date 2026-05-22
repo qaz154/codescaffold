@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { ProjectConfig } from '../components';
+import { ProjectConfig } from '../components/index.js';
 
 export interface SmartSuggestion {
   feature: string;

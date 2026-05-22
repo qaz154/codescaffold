@@ -1,4 +1,4 @@
-import { ComponentCategory } from './types';
+import { ComponentCategory } from './types.js';
 
 export const auth: ComponentCategory = {
   id: 'auth',

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fetchTemplateFromGitHub } from './community';
+import { fetchTemplateFromGitHub } from './community.js';
 
 describe('Community Templates', () => {
   describe('fetchTemplateFromGitHub', () => {

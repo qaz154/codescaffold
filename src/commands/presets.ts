@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { handleCLIError } from '../utils/errors';
-import { generateWithAI } from '../generator';
+import { handleCLIError } from '../utils/errors.js';
+import { generateWithAI } from '../generator/index.js';
 
 interface Preset {
   name: string;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { startTimer, endTimer, getPerformanceStats } from './perf';
+import { startTimer, endTimer, getPerformanceStats } from './perf.js';
 
 describe('Performance Utilities', () => {
   it('should measure timer duration', () => {

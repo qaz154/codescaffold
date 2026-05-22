@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { replaceVariables, getDefaultVariables } from './variables';
+import { replaceVariables, getDefaultVariables } from './variables.js';
 
 describe('replaceVariables', () => {
   it('should replace PROJECT_NAME', () => {

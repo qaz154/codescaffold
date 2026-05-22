@@ -1,11 +1,11 @@
 import inquirer from 'inquirer';
-import { handleCLIError } from '../utils/errors';
+import { handleCLIError } from '../utils/errors.js';
 import {
   listCommunityTemplates,
   addCommunityTemplate,
   removeCommunityTemplate,
   fetchTemplateFromGitHub,
-} from '../template/community';
+} from '../template/community.js';
 
 interface TemplateOptions {
   list?: boolean;

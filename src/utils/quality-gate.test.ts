@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { runQualityChecks } from './quality-gate';
+import { runQualityChecks } from './quality-gate.js';
 
 describe('Quality Gate', () => {
   it('should detect missing package.json', () => {

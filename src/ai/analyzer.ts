@@ -52,7 +52,7 @@ const KEYWORD_PATTERNS = {
   },
 };
 
-import { detectKeyword } from '../utils/keyword';
+import { detectKeyword } from '../utils/keyword.js';
 
 export function analyzeRequirements(requirement: string): AnalysisResult {
   const result: AnalysisResult = {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { listTemplates } from '../generator';
+import { listTemplates } from '../generator/index.js';
 
 // Mock inquirer
 vi.mock('inquirer', () => ({

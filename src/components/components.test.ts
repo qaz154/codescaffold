@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { frameworks, databases, auth, ui } from './index';
+import { frameworks, databases, auth, ui } from './index.js';
 
 describe('Component Definitions', () => {
   describe('frameworks', () => {

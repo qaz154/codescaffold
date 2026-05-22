@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { ValidationError } from './errors';
+import { ValidationError } from './errors.js';
 
 export class PathValidationError extends ValidationError {
   constructor(message: string) {

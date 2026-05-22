@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { detectKeyword, detectFirstKeyword } from './keyword';
+import { detectKeyword, detectFirstKeyword } from './keyword.js';
 
 describe('detectKeyword', () => {
   it('should detect keyword in text', () => {

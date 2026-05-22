@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { ProjectConfig } from './types';
+import { ProjectConfig } from './types.js';
 
 export function generateProjectPreview(config: ProjectConfig): string {
   const lines: string[] = [];

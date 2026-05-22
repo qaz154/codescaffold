@@ -1,9 +1,9 @@
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import ora from 'ora';
-import { generateProject } from '../template/generator';
-import { handleCLIError } from '../utils/errors';
-import { TEMPLATE_VARIANTS } from '../template/variants';
+import { generateProject } from '../template/generator.js';
+import { handleCLIError } from '../utils/errors.js';
+import { TEMPLATE_VARIANTS } from '../template/variants.js';
 
 interface InitOptions {
   template?: string;

@@ -6,7 +6,7 @@ import {
   GenerationError,
   formatError,
   ERROR_MESSAGES,
-} from './errors';
+} from './errors.js';
 
 describe('CLIError', () => {
   it('should create error with code and suggestion', () => {

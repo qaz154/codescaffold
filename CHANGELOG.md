@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.1] - 2026-05-18
+
+### Fixed
+
+#### ESM Runtime
+- **NodeNext output**: Switched TypeScript to NodeNext module resolution so compiled relative imports include `.js` extensions and run correctly in Node.js ESM.
+- **E2E CLI tests**: Replaced CommonJS `__dirname` usage with `import.meta.url` and hardened CLI argument quoting.
+
+#### Dependencies
+- **Patch updates**: Updated @typescript-eslint packages to 8.59.4 and tsx to 4.22.3.
+
 ## [1.15.01] - 2026-05-18
 
 ### Fixed

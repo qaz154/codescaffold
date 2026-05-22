@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import ora from 'ora';
-import { handleCLIError } from '../utils/errors';
+import { handleCLIError } from '../utils/errors.js';
 
 interface ValidationResult {
   passed: boolean;

@@ -9,9 +9,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const CLI_PATH = path.join(__dirname, '../dist/cli/index.js');
 
-function runCLI(args: string[], options?: { cwd?: string }): { stdout: string; stderr: string; exitCode: number } {
+function runCLI(
+  args: string[],
+  options?: { cwd?: string }
+): { stdout: string; stderr: string; exitCode: number } {
+  const command = ['node', JSON.stringify(CLI_PATH), ...args.map(arg => JSON.stringify(arg))].join(
+    ' '
+  );
+
   try {
-    const stdout = execSync(`node ${CLI_PATH} ${args.join(' ')}`, {
+    const stdout = execSync(command, {
       encoding: 'utf-8',
       timeout: 30000,
       cwd: options?.cwd,
@@ -72,7 +79,14 @@ test.describe('CodeScaffold CLI', () => {
 
   test('create should create a project with nextjs-fullstack template', () => {
     const projectPath = path.join(tempDir, 'test-create');
-    const result = runCLI(['create', 'test-create', '--template', 'nextjs-fullstack', '--output', tempDir]);
+    const result = runCLI([
+      'create',
+      'test-create',
+      '--template',
+      'nextjs-fullstack',
+      '--output',
+      tempDir,
+    ]);
     expect(result.exitCode).toBe(0);
     expect(fs.existsSync(projectPath)).toBe(true);
     expect(fs.existsSync(path.join(projectPath, 'package.json'))).toBe(true);
@@ -81,24 +95,40 @@ test.describe('CodeScaffold CLI', () => {
 
   test('create should create a project with express-api template', () => {
     const projectPath = path.join(tempDir, 'test-express');
-    const result = runCLI(['create', 'test-express', '--template', 'express-api', '--output', tempDir]);
+    const result = runCLI([
+      'create',
+      'test-express',
+      '--template',
+      'express-api',
+      '--output',
+      tempDir,
+    ]);
     expect(result.exitCode).toBe(0);
     expect(fs.existsSync(projectPath)).toBe(true);
     expect(fs.existsSync(path.join(projectPath, 'package.json'))).toBe(true);
   });
 
   test('create should fail with invalid template', () => {
-    const result = runCLI(['create', 'test-invalid', '--template', 'nonexistent-template', '--output', tempDir]);
+    const result = runCLI([
+      'create',
+      'test-invalid',
+      '--template',
+      'nonexistent-template',
+      '--output',
+      tempDir,
+    ]);
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain('not found');
   });
 
   test('generate should generate a project from requirement', () => {
-    const projectPath = path.join(tempDir, 'test-gen');
+    const projectPath = path.join(tempDir, 'a-user-management-system');
     const result = runCLI([
       'generate',
-      '--requirement', 'A user management system with authentication',
-      '--output', tempDir,
+      '--requirement',
+      'A user management system with authentication',
+      '--output',
+      tempDir,
     ]);
     expect(result.exitCode).toBe(0);
     expect(fs.existsSync(projectPath)).toBe(true);

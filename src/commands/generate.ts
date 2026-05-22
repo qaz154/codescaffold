@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { generateWithAI } from '../generator';
-import { handleCLIError, ValidationError } from '../utils/errors';
-import { loadConfig } from '../utils/config';
-import { getAIService } from '../ai/openai-service';
+import { generateWithAI } from '../generator/index.js';
+import { handleCLIError, ValidationError } from '../utils/errors.js';
+import { loadConfig } from '../utils/config.js';
+import { getAIService } from '../ai/openai-service.js';
 
 interface GenerateOptions {
   requirement?: string;

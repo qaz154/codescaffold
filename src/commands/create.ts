@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import ora from 'ora';
-import { generateProject } from '../template/generator';
-import { handleCLIError, ValidationError, TemplateError } from '../utils/errors';
+import { generateProject } from '../template/generator.js';
+import { handleCLIError, ValidationError, TemplateError } from '../utils/errors.js';
 
 interface CreateOptions {
   template?: string;

@@ -4,8 +4,8 @@ import {
   validateOutputPath,
   validateProjectName,
   sanitizeFileName,
-} from './path';
-import { ValidationError } from './errors';
+} from './path.js';
+import { ValidationError } from './errors.js';
 
 describe('PathValidationError', () => {
   it('should extend ValidationError', () => {

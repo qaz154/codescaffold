@@ -2,16 +2,16 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import ora from 'ora';
-import { getAIService } from './openai-service';
-import { getPromptTemplate, renderUserPrompt } from './prompts';
+import { getAIService } from './openai-service.js';
+import { getPromptTemplate, renderUserPrompt } from './prompts/index.js';
 import {
   parseLLMResponse,
   GeneratedFile,
   CodeGenerationResponse,
   validateGeneratedCode,
   detectLanguageFromPath,
-} from './output-parser';
-import { FileMapping, ProjectType } from './file-mapper';
+} from './output-parser.js';
+import { FileMapping, ProjectType } from './file-mapper.js';
 
 export interface GenerationContext {
   projectName: string;

@@ -3,11 +3,11 @@
 import { program } from 'commander';
 import chalk from 'chalk';
 import boxen from 'boxen';
-import { initCommand } from '../commands/init';
-import { listCommand } from '../commands/list';
-import { version, checkForUpdates, printUpdateNotice } from '../utils/version';
-import { printConfigInfo } from '../utils/config';
-import { getAIService } from '../ai/openai-service';
+import { initCommand } from '../commands/init.js';
+import { listCommand } from '../commands/list.js';
+import { version, checkForUpdates, printUpdateNotice } from '../utils/version.js';
+import { printConfigInfo } from '../utils/config.js';
+import { getAIService } from '../ai/openai-service.js';
 
 function printAIStatus(): void {
   const service = getAIService();
@@ -32,7 +32,15 @@ ${chalk.white('AI-Powered Full-Stack Project Scaffold Generator')}
 `;
 
 function showBanner(): void {
-  if (process.stdout.isTTY !== false && !process.argv.includes('--quiet')) {
+  const isVersionFlag = process.argv.includes('--version') || process.argv.includes('-V');
+  const isHelpFlag = process.argv.includes('--help') || process.argv.includes('-h');
+
+  if (
+    process.stdout.isTTY !== false &&
+    !process.argv.includes('--quiet') &&
+    !isVersionFlag &&
+    !isHelpFlag
+  ) {
     console.log(chalk.bold(asciiLogo));
     console.log(
       boxen(
@@ -78,7 +86,7 @@ program
   .command('info <template>')
   .description('Show detailed information about a template')
   .action(async template => {
-    const { infoCommand } = await import('../commands/info');
+    const { infoCommand } = await import('../commands/info.js');
     await infoCommand(template);
   });
 
@@ -89,7 +97,7 @@ program
   .option('-o, --output <path>', 'Output directory', '.')
   .option('-f, --force', 'Overwrite existing files', false)
   .action(async (name, options) => {
-    const { createCommand } = await import('../commands/create');
+    const { createCommand } = await import('../commands/create.js');
     await createCommand(name, options);
   });
 
@@ -102,7 +110,7 @@ program
   .option('--provider <provider>', 'AI provider (openai, claude, local)')
   .option('--model <model>', 'AI model to use')
   .action(async options => {
-    const { generateCommand } = await import('../commands/generate');
+    const { generateCommand } = await import('../commands/generate.js');
     await generateCommand(options);
   });
 
@@ -111,7 +119,7 @@ program
   .description('Start the CodeScaffold Web UI')
   .option('-p, --port <number>', 'Port to listen on', '3000')
   .action(async options => {
-    const { serveCommand } = await import('../commands/serve');
+    const { serveCommand } = await import('../commands/serve.js');
     await serveCommand(options);
   });
 
@@ -123,7 +131,7 @@ program
   .option('--reset-prefs', 'Reset user preferences')
   .option('--clear-cache', 'Clear offline cache')
   .action(async options => {
-    const { configCommand } = await import('../commands/config');
+    const { configCommand } = await import('../commands/config.js');
     await configCommand(options);
   });
 
@@ -131,7 +139,7 @@ program
   .command('presets')
   .description('Quick-start with project presets (API, SaaS, ML, etc.)')
   .action(async () => {
-    const { presetsCommand } = await import('../commands/presets');
+    const { presetsCommand } = await import('../commands/presets.js');
     await presetsCommand();
   });
 
@@ -140,7 +148,7 @@ program
   .description('Validate a CodeScaffold-generated project')
   .option('-d, --directory <path>', 'Project directory to validate', '.')
   .action(async options => {
-    const { validateCommand } = await import('../commands/validate');
+    const { validateCommand } = await import('../commands/validate.js');
     await validateCommand(options);
   });
 
@@ -151,7 +159,7 @@ program
   .option('-f, --force', 'Skip confirmation prompts', false)
   .option('--no-backup', 'Skip backup creation')
   .action(async options => {
-    const { upgradeCommand } = await import('../commands/upgrade');
+    const { upgradeCommand } = await import('../commands/upgrade.js');
     await upgradeCommand(options);
   });
 
@@ -167,7 +175,7 @@ program
   .option('--current-dir', '在当前目录创建项目')
   .option('-o, --output <path>', '输出目录', '.')
   .action(async options => {
-    const { composeCommand } = await import('../commands/compose');
+    const { composeCommand } = await import('../commands/compose.js');
     await composeCommand(options);
   });
 
@@ -180,7 +188,7 @@ program
   .option('-s, --search <query>', '搜索模板')
   .option('-v, --version <name>', '查看模板版本')
   .action(async options => {
-    const { templateCommand } = await import('../commands/template');
+    const { templateCommand } = await import('../commands/template.js');
     await templateCommand(options);
   });
 
@@ -192,7 +200,7 @@ program
   .option('-f, --framework <name>', '目标框架')
   .option('--dry', '仅预览，不实际迁移')
   .action(async options => {
-    const { migrateCommand } = await import('../commands/migrate');
+    const { migrateCommand } = await import('../commands/migrate.js');
     await migrateCommand(options);
   });
 
@@ -205,7 +213,7 @@ async function main(): Promise<void> {
     printUpdateNotice(updateInfo.latestVersion);
   }
 
-  program.parse();
+  await program.parseAsync();
 }
 
 main().catch(error => {

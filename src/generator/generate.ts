@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import { getCodeGeneratorService, GenerationContext } from '../ai/code-generator';
-import { getAllFilesForGeneration, ProjectType } from '../ai/file-mapper';
-import { AnalysisResult } from '../ai/analyzer';
+import { getCodeGeneratorService, GenerationContext } from '../ai/code-generator.js';
+import { getAllFilesForGeneration, ProjectType } from '../ai/file-mapper.js';
+import { AnalysisResult } from '../ai/analyzer.js';
 
 export interface GenerationResult {
   generatedFilesCount: number;

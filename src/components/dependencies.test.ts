@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkCompatibility, getRecommendedComponents } from './dependencies';
+import { checkCompatibility, getRecommendedComponents } from './dependencies.js';
 
 describe('Dependencies', () => {
   describe('checkCompatibility', () => {

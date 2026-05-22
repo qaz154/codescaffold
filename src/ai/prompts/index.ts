@@ -39,14 +39,14 @@ CRITICAL RULES:
 CODE CONVENTIONS:
 - Express Request/Response from 'express'
 - Prisma from '@prisma/client'
-- Auth types from '../middleware/auth' (AuthRequest interface)
+- Auth types from '../middleware/auth.js' (AuthRequest interface)
 - Zod for validation: import { z } from 'zod'
-- Password hashing: import { hashPassword, verifyPassword } from '../utils/password'
-- JWT: import { generateToken, verifyToken } from '../utils/jwt'
+- Password hashing: import { hashPassword, verifyPassword } from '../utils/password.js'
+- JWT: import { generateToken, verifyToken } from '../utils/jwt.js'
 - bcrypt rounds: 12
 
 EXAMPLE OUTPUT (valid JSON response):
-{"files": [{"path": "src/controllers/userController.ts", "content": "import { Request, Response } from 'express';\nimport { z } from 'zod';\nimport { prisma } from '../lib/db';\nimport { hashPassword, verifyPassword } from '../utils/password';\nimport { generateToken } from '../utils/jwt';\n\nconst registerSchema = z.object({\n  email: z.string().email(),\n  password: z.string().min(8),\n  name: z.string().min(1),\n});\n\nexport async function register(req: Request, res: Response) {\n  try {\n    const data = registerSchema.parse(req.body);\n    const hashedPassword = await hashPassword(data.password);\n    const user = await prisma.user.create({\n      data: { ...data, password: hashedPassword },\n    });\n    const token = generateToken({ id: user.id, email: user.email, role: user.role });\n    res.status(201).json({ user: { id: user.id, email: user.email }, token });\n  } catch (error) {\n    if (error instanceof z.ZodError) {\n      return res.status(400).json({ error: error.errors });\n    }\n    res.status(500).json({ error: 'Registration failed' });\n  }\n}"}]}`,
+{"files": [{"path": "src/controllers/userController.ts", "content": "import { Request, Response } from 'express';\nimport { z } from 'zod';\nimport { prisma } from '../lib/db.js';\nimport { hashPassword, verifyPassword } from '../utils/password.js';\nimport { generateToken } from '../utils/jwt.js';\n\nconst registerSchema = z.object({\n  email: z.string().email(),\n  password: z.string().min(8),\n  name: z.string().min(1),\n});\n\nexport async function register(req: Request, res: Response) {\n  try {\n    const data = registerSchema.parse(req.body);\n    const hashedPassword = await hashPassword(data.password);\n    const user = await prisma.user.create({\n      data: { ...data, password: hashedPassword },\n    });\n    const token = generateToken({ id: user.id, email: user.email, role: user.role });\n    res.status(201).json({ user: { id: user.id, email: user.email }, token });\n  } catch (error) {\n    if (error instanceof z.ZodError) {\n      return res.status(400).json({ error: error.errors });\n    }\n    res.status(500).json({ error: 'Registration failed' });\n  }\n}"}]}`,
     userPromptTemplate: `Generate user management code for an Express.js API.
 
 Project context:
@@ -109,7 +109,7 @@ CRITICAL RULES:
 4. Use router.METHOD() format
 
 EXAMPLE OUTPUT:
-{"files": [{"path": "src/routes/userRoutes.ts", "content": "import { Router } from 'express';\nimport { register, login, getProfile, updateProfile, listUsers, deleteUser } from '../controllers/userController';\nimport { authenticateToken } from '../middleware/auth';\n\nconst router = Router();\n\nrouter.post('/register', register);\nrouter.post('/login', login);\nrouter.get('/profile', authenticateToken, getProfile);\nrouter.put('/profile', authenticateToken, updateProfile);\n\n// Admin routes\nrouter.get('/', authenticateToken, listUsers);\nrouter.delete('/:id', authenticateToken, deleteUser);\n\nexport default router;"}]}`,
+{"files": [{"path": "src/routes/userRoutes.ts", "content": "import { Router } from 'express';\nimport { register, login, getProfile, updateProfile, listUsers, deleteUser } from '../controllers/userController.js';\nimport { authenticateToken } from '../middleware/auth.js';\n\nconst router = Router();\n\nrouter.post('/register', register);\nrouter.post('/login', login);\nrouter.get('/profile', authenticateToken, getProfile);\nrouter.put('/profile', authenticateToken, updateProfile);\n\n// Admin routes\nrouter.get('/', authenticateToken, listUsers);\nrouter.delete('/:id', authenticateToken, deleteUser);\n\nexport default router;"}]}`,
     userPromptTemplate: `Generate Express routes for user management.
 
 Features: {{FEATURES}}
@@ -157,7 +157,7 @@ CRITICAL RULES:
 5. NEVER use 'any' type
 
 EXAMPLE OUTPUT:
-{"files": [{"path": "src/controllers/itemController.ts", "content": "import { Request, Response } from 'express';\nimport { prisma } from '../lib/db';\nimport { z } from 'zod';\n\nconst createSchema = z.object({ name: z.string().min(1), description: z.string().optional() });\n\nexport async function listItems(req: Request, res: Response) {\n  try {\n    const { skip = 0, take = 20 } = req.query;\n    const items = await prisma.item.findMany({ skip: Number(skip), take: Number(take) });\n    res.json({ data: items, count: items.length });\n  } catch (error) {\n    res.status(500).json({ error: 'Failed to fetch items' });\n  }\n}"}]}`,
+{"files": [{"path": "src/controllers/itemController.ts", "content": "import { Request, Response } from 'express';\nimport { prisma } from '../lib/db.js';\nimport { z } from 'zod';\n\nconst createSchema = z.object({ name: z.string().min(1), description: z.string().optional() });\n\nexport async function listItems(req: Request, res: Response) {\n  try {\n    const { skip = 0, take = 20 } = req.query;\n    const items = await prisma.item.findMany({ skip: Number(skip), take: Number(take) });\n    res.json({ data: items, count: items.length });\n  } catch (error) {\n    res.status(500).json({ error: 'Failed to fetch items' });\n  }\n}"}]}`,
     userPromptTemplate: `Generate CRUD code for: {{ENTITY}}
 
 Fields: {{FIELDS}}

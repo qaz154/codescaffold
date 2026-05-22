@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { recommendArchitecture } from './architect';
-import { AnalysisResult } from './analyzer';
+import { recommendArchitecture } from './architect.js';
+import { AnalysisResult } from './analyzer.js';
 
 describe('recommendArchitecture', () => {
   const baseAnalysis: AnalysisResult = {

@@ -1,4 +1,4 @@
-import { AnalysisResult } from './analyzer';
+import { AnalysisResult } from './analyzer.js';
 
 export interface ArchitectureRecommendation {
   techStack: {

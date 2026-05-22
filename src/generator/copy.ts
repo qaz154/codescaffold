@@ -1,4 +1,4 @@
-import { generateProject } from '../template/generator';
+import { generateProject } from '../template/generator.js';
 
 export interface CopyOptions {
   projectName: string;
@@ -27,10 +27,9 @@ export function extractProjectName(requirement: string): string {
     .split(/\s+/)
     .slice(0, 4);
 
-  const name = words
-    .map(w => w.replace(/[-_]+/g, ''))
-    .filter(w => w.length > 0)
-    .join('-');
+  return normalizeProjectName(words.join('-')) || 'my-project';
+}
 
-  return name || 'my-project';
+export function normalizeProjectName(name: string): string {
+  return name.trim().replace(/\.+/g, '').replace(/-+/g, '-');
 }

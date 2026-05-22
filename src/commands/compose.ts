@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import path from 'path';
-import { handleCLIError } from '../utils/errors';
+import { handleCLIError } from '../utils/errors.js';
 import {
   ComponentCategory,
   ComponentOption,
@@ -10,14 +10,14 @@ import {
   databases,
   auth,
   ui,
-} from '../components';
-import { loadPreferences, updatePreferences } from '../utils/preferences';
+} from '../components/index.js';
+import { loadPreferences, updatePreferences } from '../utils/preferences.js';
 import {
   checkCompatibility,
   printCompatibilityResult,
   getRecommendedComponents,
-} from '../components/dependencies';
-import { printProjectPreview } from '../components/preview';
+} from '../components/dependencies.js';
+import { printProjectPreview } from '../components/preview.js';
 
 interface ComposeOptions {
   name?: string;
@@ -216,7 +216,7 @@ function displayConfig(config: ProjectConfig): void {
 }
 
 async function generateProject(config: ProjectConfig, options: ComposeOptions): Promise<void> {
-  const { fastGenerate } = await import('../template/fast-generator');
+  const { fastGenerate } = await import('../template/fast-generator.js');
 
   const projectPath = await fastGenerate({
     name: config.name,

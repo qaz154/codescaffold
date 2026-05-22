@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { validateOutputPath, validateProjectName, PathValidationError } from '../utils/path';
+import { validateOutputPath, validateProjectName, PathValidationError } from '../utils/path.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface ProjectConfig {
   name: string;

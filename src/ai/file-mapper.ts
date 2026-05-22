@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { GenerationError } from '../utils/errors';
+import { GenerationError } from '../utils/errors.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export type ProjectType = 'nextjs-fullstack' | 'express-api' | 'python-fastapi' | 'go-microservice';
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { listTemplates, validateTemplate } from './index';
+import { listTemplates, validateTemplate } from './index.js';
 
 describe('listTemplates', () => {
   it('should return array of template names', () => {

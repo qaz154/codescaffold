@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeConfig } from './smart-generator';
-import { ProjectConfig, frameworks, databases, auth } from '../components';
+import { analyzeConfig } from './smart-generator.js';
+import { ProjectConfig, frameworks, databases, auth } from '../components/index.js';
 
 describe('Smart Generator', () => {
   it('should suggest App Router for Next.js', () => {
