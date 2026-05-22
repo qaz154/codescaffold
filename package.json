@@ -19,7 +19,8 @@
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "test:e2e:ci": "npm run build && playwright test"
+    "test:e2e:ci": "npm run build && playwright test",
+    "test:templates": "node --import tsx src/scripts/validate-templates.ts"
   },
   "keywords": [
     "scaffold",
