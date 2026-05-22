@@ -3,6 +3,7 @@ import inquirer from 'inquirer';
 import ora from 'ora';
 import { generateProject } from '../template/generator.js';
 import { handleCLIError, ValidationError, TemplateError } from '../utils/errors.js';
+import { printNextSteps } from '../utils/next-steps.js';
 
 interface CreateOptions {
   template?: string;
@@ -74,11 +75,7 @@ export async function createCommand(name: string, options: CreateOptions) {
 
     spinner.succeed(chalk.green(`Project created successfully at ${chalk.bold(projectPath)}`));
 
-    console.log(chalk.green('\n✓ Next steps:'));
-    console.log(chalk.gray(`  cd ${name}`));
-    console.log(chalk.gray('  npm install'));
-    console.log(chalk.gray('  npm run dev'));
-    console.log();
+    printNextSteps(name, options.template);
   } catch (error) {
     spinner.fail(chalk.red('Project creation failed'));
 

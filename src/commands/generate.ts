@@ -4,6 +4,7 @@ import { generateWithAI } from '../generator/index.js';
 import { handleCLIError, ValidationError } from '../utils/errors.js';
 import { loadConfig } from '../utils/config.js';
 import { getAIService } from '../ai/openai-service.js';
+import { getTemplateNextSteps } from '../utils/next-steps.js';
 
 interface GenerateOptions {
   requirement?: string;
@@ -89,16 +90,8 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
     console.log(chalk.cyan(`  cd ${report.projectPath}`));
 
     const projectType = report.analysis.projectType;
-
-    if (projectType === 'nextjs-fullstack' || projectType === 'express-api') {
-      console.log(chalk.gray('  npm install'));
-      console.log(chalk.gray('  npm run dev'));
-    } else if (projectType === 'python-fastapi') {
-      console.log(chalk.gray('  pip install -e ".[dev]"'));
-      console.log(chalk.gray('  uvicorn app.main:app --reload'));
-    } else if (projectType === 'go-microservice') {
-      console.log(chalk.gray('  go mod tidy'));
-      console.log(chalk.gray('  go run cmd/server/main.go'));
+    for (const step of getTemplateNextSteps(projectType)) {
+      console.log(chalk.gray(`  ${step}`));
     }
 
     if (report.generatedFiles && report.generatedFiles > 0) {

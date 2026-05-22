@@ -4,6 +4,7 @@ import ora from 'ora';
 import { generateProject } from '../template/generator.js';
 import { handleCLIError } from '../utils/errors.js';
 import { TEMPLATE_VARIANTS } from '../template/variants.js';
+import { printNextSteps } from '../utils/next-steps.js';
 
 interface InitOptions {
   template?: string;
@@ -126,11 +127,7 @@ export async function initCommand(options: InitOptions) {
 
     spinner.succeed(chalk.green(`Project generated successfully at ${chalk.bold(projectPath)}`));
 
-    console.log(chalk.green('\n✓ Next steps:'));
-    console.log(chalk.gray(`  cd ${answers.projectName}`));
-    console.log(chalk.gray('  npm install'));
-    console.log(chalk.gray('  npm run dev'));
-    console.log();
+    printNextSteps(answers.projectName, answers.template);
   } catch (error) {
     spinner.fail(chalk.red('Project generation failed'));
     handleCLIError(error);

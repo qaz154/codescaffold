@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from python-dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
 load_dotenv()

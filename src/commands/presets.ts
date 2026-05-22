@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { handleCLIError } from '../utils/errors.js';
 import { generateWithAI } from '../generator/index.js';
+import { getTemplateNextSteps } from '../utils/next-steps.js';
 
 interface Preset {
   name: string;
@@ -134,19 +135,8 @@ export async function presetsCommand(): Promise<void> {
     console.log(chalk.gray('Next steps:'));
     console.log(chalk.cyan(`  cd ${projectName}`));
 
-    if (preset.template === 'python-fastapi') {
-      console.log(chalk.gray('  python -m venv venv'));
-      console.log(
-        chalk.gray('  source venv/bin/activate  # or venv\\Scripts\\activate on Windows')
-      );
-      console.log(chalk.gray('  pip install -r requirements.txt'));
-      console.log(chalk.gray('  uvicorn app.main:app --reload'));
-    } else if (preset.template === 'go-microservice') {
-      console.log(chalk.gray('  go mod tidy'));
-      console.log(chalk.gray('  go run cmd/server/main.go'));
-    } else {
-      console.log(chalk.gray('  npm install'));
-      console.log(chalk.gray('  npm run dev'));
+    for (const step of getTemplateNextSteps(preset.template)) {
+      console.log(chalk.gray(`  ${step}`));
     }
   } catch (error) {
     handleCLIError(error);

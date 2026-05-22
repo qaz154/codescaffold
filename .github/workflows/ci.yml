@@ -23,13 +23,13 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npx eslint src/
+        run: npm run lint
 
       - name: Run Type check
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Check formatting
-        run: npx prettier --check "src/**/*.ts"
+        run: npm run format:check
 
   test:
     name: Unit Tests
@@ -70,4 +70,4 @@ jobs:
       - name: Run E2E tests
         run: |
           npx playwright install --with-deps chromium
-          npm run test:e2e
+          npm run test:e2e:ci
