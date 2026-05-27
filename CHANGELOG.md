@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.2] - 2026-05-22
+
+### Fixed
+
+#### CI & Quality
+- **Template-aware next steps**: `create`, `init`, `generate`, and `presets` now show language/runtime-appropriate next steps.
+- **Script normalization**: Added `lint`, `typecheck`, `format:check`, and `test:e2e:ci` scripts.
+- **Template CI**: Added automated template validation to GitHub Actions.
+
+#### Templates
+- **Express template**: Updated TypeScript config to Node16-compatible settings.
+- **FastAPI template**: Fixed `dotenv` import in generated template code.
+
 ## [1.15.1] - 2026-05-18
 
 ### Fixed

@@ -67,6 +67,43 @@ jobs:
       - name: Validate templates
         run: npm run test:templates
 
+  template-deep-validation:
+    name: Template Deep Validation
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        template: [express-api, nextjs-fullstack, python-fastapi, go-microservice]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: npm run build
+
+      - name: Setup Python
+        if: matrix.template == 'python-fastapi'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        if: matrix.template == 'go-microservice'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Validate template
+        run: bash scripts/ci-validate-template.sh ${{ matrix.template }}
+
   build:
     name: Build
     runs-on: ubuntu-latest

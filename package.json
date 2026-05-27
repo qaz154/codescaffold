@@ -1,6 +1,6 @@
 {
   "name": "@qaz154/codescaffold",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "AI-Powered Full-Stack Project Scaffold Generator",
   "type": "module",
   "main": "dist/cli/index.js",
@@ -20,7 +20,8 @@
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ci": "npm run build && playwright test",
-    "test:templates": "node --import tsx src/scripts/validate-templates.ts"
+    "test:templates": "node --import tsx src/scripts/validate-templates.ts",
+    "test:templates:deep": "bash scripts/validate-templates.sh"
   },
   "keywords": [
     "scaffold",
