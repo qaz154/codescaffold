@@ -71,7 +71,7 @@ jobs:
     name: Template Deep Validation
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         template: [express-api, nextjs-fullstack, python-fastapi, go-microservice]
     steps:

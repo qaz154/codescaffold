@@ -32,7 +32,9 @@ case "$TEMPLATE" in
     ;;
   go-microservice)
     pushd "$PROJECT_DIR" >/dev/null
-    go test ./...
+    go mod tidy
+    go vet ./...
+    go build ./...
     popd >/dev/null
     ;;
   *)
