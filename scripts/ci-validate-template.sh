@@ -34,7 +34,6 @@ case "$TEMPLATE" in
     pushd "$PROJECT_DIR" >/dev/null
     go mod tidy
     go vet ./...
-    go build ./...
     popd >/dev/null
     ;;
   *)

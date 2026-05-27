@@ -24,7 +24,7 @@ func main() {
 	appLogger := logger.New("{{PROJECT_NAME}}")
 
 	if err := godotenv.Load(); err != nil {
-		appLogger.Warn("No .env file found, using environment variables")
+		appLogger.Warn("No .env file found, using environment variables", nil)
 	}
 
 	// Initialize database
