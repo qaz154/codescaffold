@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.8] - 2026-06-03
+
+### Changed
+
+#### CLI
+- **`doctor` command**: New project health scanner that checks package health, security, config validation, template drift, and environment.
+- **`--fix` flag**: Auto-repair issues like missing .gitignore entries and lock files.
+- Scans for hardcoded secrets, outdated dependencies, deprecated configs, and Docker best practices.
+
 ## [1.15.7] - 2026-06-03
 
 ### Changed

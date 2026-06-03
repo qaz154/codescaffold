@@ -206,6 +206,16 @@ program
     await migrateCommand(options);
   });
 
+program
+  .command('doctor')
+  .description('Scan project health and suggest fixes')
+  .option('-d, --directory <path>', 'Project directory to scan', '.')
+  .option('--fix', 'Auto-fix issues where possible')
+  .action(async options => {
+    const { doctorCommand } = await import('../commands/doctor.js');
+    await doctorCommand(options);
+  });
+
 async function main(): Promise<void> {
   showBanner();
   showSystemInfo();
