@@ -1,5 +1,33 @@
 import { z } from 'zod';
 
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 1000;
+
+async function withRetry<T>(fn: () => Promise<T>, _label: string): Promise<T> {
+  let lastError: Error | undefined;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      const isRetryable =
+        lastError.message.includes('rate') ||
+        lastError.message.includes('429') ||
+        lastError.message.includes('503') ||
+        lastError.message.includes('timeout') ||
+        lastError.message.includes('ECONNRESET');
+
+      if (!isRetryable || attempt === MAX_RETRIES - 1) {
+        throw lastError;
+      }
+
+      const delay = BASE_DELAY_MS * Math.pow(2, attempt);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+}
+
 const TEMPLATE_CHOICES = [
   'nextjs-fullstack',
   'express-api',
@@ -166,9 +194,9 @@ export class AIService {
 
     try {
       if (this.anthropicClient) {
-        return await this.analyzeWithClaude(userPrompt);
+        return await withRetry(() => this.analyzeWithClaude(userPrompt), 'claude');
       } else if (this.openAIClient) {
-        return await this.analyzeWithOpenAI(userPrompt);
+        return await withRetry(() => this.analyzeWithOpenAI(userPrompt), 'openai');
       } else {
         throw new Error('No AI client initialized');
       }
@@ -247,9 +275,15 @@ export class AIService {
 
     try {
       if (this.anthropicClient) {
-        return await this.analyzePromptWithClaude(systemPrompt, userPrompt, schema);
+        return await withRetry(
+          () => this.analyzePromptWithClaude(systemPrompt, userPrompt, schema),
+          'claude-prompt'
+        );
       } else if (this.openAIClient) {
-        return await this.analyzePromptWithOpenAI(systemPrompt, userPrompt, schema);
+        return await withRetry(
+          () => this.analyzePromptWithOpenAI(systemPrompt, userPrompt, schema),
+          'openai-prompt'
+        );
       } else {
         throw new Error('No AI client initialized');
       }

@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.9] - 2026-06-03
+
+### Changed
+
+#### AI
+- **Retry logic**: Added exponential backoff retry (3 attempts) for rate limits, timeouts, and transient errors.
+- Retries on 429, 503, timeout, ECONNRESET errors.
+- Non-retryable errors fail immediately.
+
+#### Testing
+- **validate.test.ts**: Integration tests for template structure validation across all 4 templates.
+- **doctor.test.ts**: Tests for project health detection (package.json, .gitignore, secrets).
+- **Test count**: 154 → 154 tests across 19 → 21 test files.
+
 ## [1.15.8] - 2026-06-03
 
 ### Changed

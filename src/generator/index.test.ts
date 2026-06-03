@@ -27,4 +27,16 @@ describe('validateTemplate', () => {
     const result = await validateTemplate('nonexistent-template');
     expect(result).toBe(false);
   });
+
+  it('should validate all known templates', async () => {
+    for (const template of [
+      'nextjs-fullstack',
+      'express-api',
+      'python-fastapi',
+      'go-microservice',
+    ]) {
+      const result = await validateTemplate(template);
+      expect(result).toBe(true);
+    }
+  });
 });
