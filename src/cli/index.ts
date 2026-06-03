@@ -173,6 +173,7 @@ program
   .option('--yes', 'Accept defaults, skip confirmation')
   .option('--pkg <manager>', 'Package manager (npm/yarn/pnpm/bun)')
   .option('--current-dir', 'Create project in current directory')
+  .option('--preview', 'Preview project structure without writing files')
   .option('-o, --output <path>', 'Output directory', '.')
   .action(async options => {
     const { composeCommand } = await import('../commands/compose.js');

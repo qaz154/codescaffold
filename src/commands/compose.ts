@@ -28,29 +28,34 @@ interface ComposeOptions {
   output?: string;
   pkg?: string;
   currentDir?: boolean;
+  preview?: boolean;
 }
 
 export async function composeCommand(options: ComposeOptions): Promise<void> {
   try {
-    console.log(chalk.cyan('\n📦 CodeScaffold 组件化创建\n'));
+    console.log(chalk.cyan('\nCodeScaffold Composable Project Builder\n'));
 
     const config = await buildConfig(options);
     displayConfig(config);
     printProjectPreview(config);
 
-    // --yes 模式跳过确认
+    if (options.preview) {
+      showDryRunPreview(config);
+      return;
+    }
+
     if (!options.yes) {
       const { confirm } = await inquirer.prompt([
         {
           type: 'confirm',
           name: 'confirm',
-          message: '确认创建项目？',
+          message: 'Create this project?',
           default: true,
         },
       ]);
 
       if (!confirm) {
-        console.log(chalk.gray('已取消'));
+        console.log(chalk.gray('Cancelled'));
         return;
       }
     }
@@ -62,17 +67,97 @@ export async function composeCommand(options: ComposeOptions): Promise<void> {
   }
 }
 
+function showDryRunPreview(config: ProjectConfig): void {
+  console.log(chalk.cyan('\nProject Preview (dry run, no files written)\n'));
+
+  const tree: string[] = [];
+  tree.push(`${chalk.bold(config.name)}/`);
+
+  const isNode = config.framework.id !== 'fastapi' && config.framework.id !== 'go-gin';
+
+  if (isNode) {
+    tree.push('  package.json');
+    tree.push('  tsconfig.json');
+  }
+
+  if (config.framework.id === 'fastapi') {
+    tree.push('  pyproject.toml');
+    tree.push('  app/');
+    tree.push('    main.py');
+    tree.push('    config.py');
+    tree.push('  tests/');
+  } else if (config.framework.id === 'go-gin') {
+    tree.push('  go.mod');
+    tree.push('  cmd/');
+    tree.push('    server/');
+    tree.push('      main.go');
+    tree.push('  internal/');
+    tree.push('    handlers/');
+    tree.push('    models/');
+  } else if (config.framework.id.startsWith('nextjs')) {
+    tree.push('  app/');
+    tree.push('    page.tsx');
+    tree.push('    layout.tsx');
+    tree.push('  components/');
+    tree.push('  lib/');
+  } else {
+    tree.push('  src/');
+    tree.push('    index.ts');
+    tree.push('    routes/');
+    tree.push('    middleware/');
+  }
+
+  if (config.database) {
+    if (config.database.id.startsWith('prisma')) {
+      tree.push('  prisma/');
+      tree.push('    schema.prisma');
+    }
+  }
+
+  tree.push('  .gitignore');
+  tree.push('  .env.example');
+  tree.push('  README.md');
+  tree.push('  Dockerfile');
+  tree.push('  docker-compose.yml');
+
+  console.log(chalk.gray('File structure:'));
+  for (const line of tree) {
+    console.log(`  ${line}`);
+  }
+
+  console.log(chalk.gray('\nDependencies:'));
+  if (config.framework.id.startsWith('nextjs')) {
+    console.log(`  ${chalk.green('+')} next, react, react-dom`);
+  } else if (config.framework.id === 'express-api') {
+    console.log(`  ${chalk.green('+')} express, cors, helmet, dotenv`);
+  } else if (config.framework.id === 'fastapi') {
+    console.log(`  ${chalk.green('+')} fastapi, uvicorn, sqlalchemy, pydantic`);
+  } else if (config.framework.id === 'go-gin') {
+    console.log(`  ${chalk.green('+')} gin, pgx, jwt, uuid`);
+  }
+
+  if (config.database) {
+    console.log(`  ${chalk.green('+')} ${config.database.name}`);
+  }
+  if (config.auth) {
+    console.log(`  ${chalk.green('+')} ${config.auth.name}`);
+  }
+  if (config.ui) {
+    console.log(`  ${chalk.green('+')} ${config.ui.name}`);
+  }
+
+  console.log(chalk.cyan('\nRun without --preview to create the project.\n'));
+}
+
 async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
   const prefs = loadPreferences();
   let name = options.name;
 
-  // 当前目录模式
   if (options.currentDir) {
     name = path.basename(process.cwd());
   }
 
   if (!name) {
-    // defaults 模式使用默认名称
     if (options.defaults) {
       name = 'my-project';
     } else {
@@ -80,31 +165,31 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
         {
           type: 'input',
           name: 'name',
-          message: '项目名称:',
+          message: 'Project name:',
           default: 'my-project',
           validate: input =>
-            /^[a-zA-Z0-9_-]+$/.test(input) || '项目名称只能包含字母、数字、下划线和连字符',
+            /^[a-zA-Z0-9_-]+$/.test(input) ||
+            'Name can only contain letters, numbers, hyphens, and underscores',
         },
       ]);
       name = answer.name;
     }
   }
 
-  // defaults 模式使用默认组件
   let framework: ComponentOption;
   let database: ComponentOption | null = null;
   let authOption: ComponentOption | null = null;
   let uiOption: ComponentOption | null = null;
 
   if (options.defaults) {
-    framework = frameworks.options[0]; // Next.js App Router
-    database = databases.options[0]; // Prisma PostgreSQL
-    authOption = auth.options[0]; // NextAuth
-    uiOption = ui.options[0]; // Tailwind + shadcn
+    framework = frameworks.options[0];
+    database = databases.options[0];
+    authOption = auth.options[0];
+    uiOption = ui.options[0];
   } else {
     framework = (await selectComponent(frameworks, prefs.lastFramework))!;
     if (!framework) {
-      throw new Error('必须选择一个框架');
+      throw new Error('Framework is required');
     }
 
     if (!options.minimal && !options.empty) {
@@ -112,7 +197,6 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
       authOption = await selectComponent(auth, prefs.lastAuth, framework.id);
       uiOption = await selectComponent(ui, prefs.lastUi, framework.id);
 
-      // 兼容性检查
       const compatibility = checkCompatibility(
         framework.id,
         database?.id || null,
@@ -127,19 +211,18 @@ async function buildConfig(options: ComposeOptions): Promise<ProjectConfig> {
           {
             type: 'confirm',
             name: 'proceed',
-            message: '存在兼容性问题，是否继续？',
+            message: 'Compatibility issues detected. Continue anyway?',
             default: false,
           },
         ]);
 
         if (!proceed) {
-          throw new Error('用户取消');
+          throw new Error('Cancelled by user');
         }
       }
     }
   }
 
-  // 保存偏好
   updatePreferences({
     lastFramework: framework.id,
     lastDatabase: database?.id,
@@ -162,7 +245,6 @@ async function selectComponent(
   lastChoice?: string,
   framework?: string
 ): Promise<ComponentOption | null> {
-  // 获取推荐组件
   const recommendations = framework ? getRecommendedComponents(framework) : null;
   const recommendedIds = recommendations?.[category.id as keyof typeof recommendations] || [];
 
@@ -170,14 +252,14 @@ async function selectComponent(
     opt => {
       const isRecommended = recommendedIds.includes(opt.id);
       const name = isRecommended
-        ? `${opt.name} - ${opt.description} ${chalk.green('(推荐)')}`
+        ? `${opt.name} - ${opt.description} ${chalk.green('(recommended)')}`
         : `${opt.name} - ${opt.description}`;
       return { name, value: opt };
     }
   );
 
   if (!category.required) {
-    choices.push({ name: '跳过', value: null });
+    choices.push({ name: 'Skip', value: null });
   }
 
   const defaultIndex = lastChoice
@@ -188,7 +270,7 @@ async function selectComponent(
     {
       type: 'list',
       name: 'selected',
-      message: `选择${category.name}${lastChoice ? ' (回车使用上次选择)' : ''}:`,
+      message: `Select ${category.name}${lastChoice ? ' (press enter for previous choice)' : ''}:`,
       choices,
       default: defaultIndex >= 0 ? defaultIndex : 0,
     },
@@ -198,16 +280,16 @@ async function selectComponent(
 }
 
 function displayConfig(config: ProjectConfig): void {
-  console.log(chalk.cyan('\n📋 项目配置:\n'));
-  console.log(`  ${chalk.bold('名称:')} ${config.name}`);
-  console.log(`  ${chalk.bold('框架:')} ${chalk.green(config.framework.name)}`);
+  console.log(chalk.cyan('\nProject Configuration:\n'));
+  console.log(`  ${chalk.bold('Name:')} ${config.name}`);
+  console.log(`  ${chalk.bold('Framework:')} ${chalk.green(config.framework.name)}`);
 
   if (config.database) {
-    console.log(`  ${chalk.bold('数据库:')} ${chalk.green(config.database.name)}`);
+    console.log(`  ${chalk.bold('Database:')} ${chalk.green(config.database.name)}`);
   }
 
   if (config.auth) {
-    console.log(`  ${chalk.bold('认证:')} ${chalk.green(config.auth.name)}`);
+    console.log(`  ${chalk.bold('Auth:')} ${chalk.green(config.auth.name)}`);
   }
 
   if (config.ui) {
@@ -227,8 +309,8 @@ async function generateProject(config: ProjectConfig, options: ComposeOptions): 
     output: options.output || '.',
   });
 
-  console.log(chalk.green(`\n✅ 项目创建成功: ${projectPath}\n`));
-  console.log(chalk.gray('下一步:'));
+  console.log(chalk.green(`\nProject created: ${projectPath}\n`));
+  console.log(chalk.gray('Next steps:'));
   console.log(chalk.gray(`  cd ${config.name}`));
   console.log(chalk.gray('  npm install'));
   console.log(chalk.gray('  npm run dev'));
