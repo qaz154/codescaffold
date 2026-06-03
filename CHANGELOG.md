@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.5] - 2026-06-03
+
+### Changed
+
+#### Testing
+- **New tests**: Added 37 new unit tests across 3 new test files.
+- **next-steps.test.ts**: Tests for template-aware next-step guidance.
+- **file-mapper.test.ts**: Tests for file mapping, feature files, and deduplication.
+- **output-parser.test.ts**: Tests for LLM response parsing, language detection, and code validation.
+- **Test count**: 107 → 144 tests across 14 → 17 test files.
+
 ## [1.15.4] - 2026-06-03
 
 ### Changed
