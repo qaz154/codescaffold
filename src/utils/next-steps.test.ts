@@ -34,7 +34,12 @@ describe('getTemplateNextSteps', () => {
   });
 
   it('should return non-empty arrays for all known templates', () => {
-    for (const template of ['nextjs-fullstack', 'express-api', 'python-fastapi', 'go-microservice']) {
+    for (const template of [
+      'nextjs-fullstack',
+      'express-api',
+      'python-fastapi',
+      'go-microservice',
+    ]) {
       const steps = getTemplateNextSteps(template);
       expect(steps.length).toBeGreaterThan(0);
     }

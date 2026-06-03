@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { detectLanguageFromPath, parseLLMResponse, validateGeneratedCode } from './output-parser.js';
+import {
+  detectLanguageFromPath,
+  parseLLMResponse,
+  validateGeneratedCode,
+} from './output-parser.js';
 
 describe('detectLanguageFromPath', () => {
   it('should detect typescript from .ts', () => {
@@ -55,9 +59,12 @@ describe('parseLLMResponse', () => {
   });
 
   it('should parse response wrapped in markdown code block', () => {
-    const input = '```json\n' + JSON.stringify({
-      files: [{ path: 'app.py', content: 'print("hello")' }],
-    }) + '\n```';
+    const input =
+      '```json\n' +
+      JSON.stringify({
+        files: [{ path: 'app.py', content: 'print("hello")' }],
+      }) +
+      '\n```';
     const result = parseLLMResponse(input);
     expect(result.files).toHaveLength(1);
     expect(result.files[0].language).toBe('python');
