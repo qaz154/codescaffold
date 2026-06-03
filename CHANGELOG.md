@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.0] - 2026-06-03
+
+### Changed
+
+#### Packaging
+- **npm publish scope**: Added `files`, `exports`, and `types` fields to package.json for clean publishing.
+- **ESM consumers**: Proper `exports` map for `@qaz154/codescaffold`.
+
+#### CLI
+- **Unified language**: All command descriptions are now in English.
+- **Dependency audit**: Added `npm audit --audit-level=high` step to CI.
+
+#### Security
+- **Vitest upgraded**: vitest upgraded from v3 to v4 to resolve critical vulnerability.
+- **AI service ESM**: Replaced `require()` with dynamic `import()` for proper ESM support.
+
+#### Code Quality
+- **Quality gate**: Enhanced tsconfig.json validation to check for parseable JSON.
+- **Unified error messages**: `OPENAI_NOT_CONFIGURED` renamed to `AI_NOT_CONFIGURED` for provider-agnostic messaging.
+- **Go template cache**: Fixed CI Go template cache warning by disabling automatic cache.
+
 ## [1.15.2] - 2026-05-22
 
 ### Fixed
