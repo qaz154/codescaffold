@@ -109,6 +109,7 @@ program
   .option('-f, --force', 'Overwrite existing files', false)
   .option('--provider <provider>', 'AI provider (openai, claude, local)')
   .option('--model <model>', 'AI model to use')
+  .option('--preview', 'Preview what AI would generate without writing files')
   .action(async options => {
     const { generateCommand } = await import('../commands/generate.js');
     await generateCommand(options);

@@ -5,6 +5,8 @@ import { handleCLIError, ValidationError } from '../utils/errors.js';
 import { loadConfig } from '../utils/config.js';
 import { getAIService } from '../ai/openai-service.js';
 import { getTemplateNextSteps } from '../utils/next-steps.js';
+import { analyzeRequirements } from '../ai/analyzer.js';
+import { recommendArchitecture } from '../ai/architect.js';
 
 interface GenerateOptions {
   requirement?: string;
@@ -12,6 +14,7 @@ interface GenerateOptions {
   force?: boolean;
   provider?: 'openai' | 'claude' | 'local';
   model?: string;
+  preview?: boolean;
 }
 
 export async function generateCommand(options: GenerateOptions): Promise<void> {
@@ -79,13 +82,18 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
     }
     console.log();
 
+    if (options.preview) {
+      await showGeneratePreview(requirement);
+      return;
+    }
+
     const report = await generateWithAI({
       requirement,
       output: options.output || effectiveOutput,
       force: options.force || false,
     });
 
-    console.log(chalk.green('\n🎉 Project generated successfully!\n'));
+    console.log(chalk.green('\nProject generated successfully!\n'));
     console.log(chalk.gray('Next steps:'));
     console.log(chalk.cyan(`  cd ${report.projectPath}`));
 
@@ -95,10 +103,73 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
     }
 
     if (report.generatedFiles && report.generatedFiles > 0) {
-      console.log(chalk.cyan(`\n📝 AI generated ${report.generatedFiles} custom file(s)\n`));
+      console.log(chalk.cyan(`\nAI generated ${report.generatedFiles} custom file(s)\n`));
     }
   } catch (error) {
     handleCLIError(error);
     process.exit(1);
   }
+}
+
+async function showGeneratePreview(requirement: string): Promise<void> {
+  console.log(chalk.cyan('\nAI Analysis Preview (dry run, no files written)\n'));
+
+  const aiService = getAIService();
+  let analysis;
+
+  if (aiService.isConfigured()) {
+    try {
+      console.log(chalk.gray('Running AI analysis...'));
+      const aiResult = await aiService.analyzeRequirements(requirement);
+      analysis = {
+        projectType: aiResult.projectType,
+        features: aiResult.features,
+        database: aiResult.database,
+        auth: aiResult.features.includes('auth'),
+        api: true,
+        ui: aiResult.features.some((f: string) =>
+          ['admin-dashboard', 'frontend', 'ui'].includes(f.toLowerCase())
+        ),
+        docker: true,
+        ci: true,
+      };
+      console.log(chalk.green('AI analysis complete\n'));
+    } catch {
+      console.log(chalk.yellow('AI analysis failed, using keyword analysis\n'));
+      analysis = analyzeRequirements(requirement);
+    }
+  } else {
+    console.log(chalk.gray('No AI configured, using keyword analysis\n'));
+    analysis = analyzeRequirements(requirement);
+  }
+
+  const architecture = recommendArchitecture(analysis);
+
+  console.log(chalk.bold('Detected:'));
+  console.log(`  Template:   ${chalk.green(analysis.projectType)}`);
+  console.log(`  Database:   ${chalk.green(analysis.database)}`);
+  console.log(`  Features:   ${chalk.green(analysis.features.join(', ') || 'none')}`);
+  console.log(`  Auth:       ${analysis.auth ? chalk.green('yes') : chalk.gray('no')}`);
+  console.log(`  Docker:     ${analysis.docker ? chalk.green('yes') : chalk.gray('no')}`);
+
+  console.log(chalk.bold('\nArchitecture:'));
+  console.log(`  Backend:    ${chalk.green(architecture.techStack.backend)}`);
+  console.log(`  Database:   ${chalk.green(architecture.techStack.database)}`);
+  if (architecture.techStack.frontend) {
+    console.log(`  Frontend:   ${chalk.green(architecture.techStack.frontend)}`);
+  }
+  console.log(`  Testing:    ${chalk.green(architecture.techStack.testing.join(', '))}`);
+
+  console.log(chalk.bold('\nWould generate:'));
+  console.log(`  Base template: ${chalk.green(analysis.projectType)}`);
+  if (analysis.features.length > 0) {
+    console.log(`  AI files:      ${chalk.green(analysis.features.length + ' feature modules')}`);
+  }
+
+  console.log(chalk.bold('\nNext steps (if run without --preview):'));
+  for (const step of getTemplateNextSteps(analysis.projectType)) {
+    console.log(chalk.gray(`  ${step}`));
+  }
+
+  console.log(chalk.cyan('\nRun without --preview to generate the project.\n'));
 }

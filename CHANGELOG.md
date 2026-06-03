@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.7] - 2026-06-03
+
+### Changed
+
+#### CLI
+- **Generate preview**: Added `--preview` flag to `generate` command for dry-run AI analysis.
+- Preview shows detected template, database, features, architecture, and next steps without writing files.
+
 ## [1.15.6] - 2026-06-03
 
 ### Changed
