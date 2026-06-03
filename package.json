@@ -4,6 +4,20 @@
   "description": "AI-Powered Full-Stack Project Scaffold Generator",
   "type": "module",
   "main": "dist/cli/index.js",
+  "types": "dist/cli/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cli/index.d.ts",
+      "import": "./dist/cli/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "bin": {
     "codescaffold": "./dist/cli/index.js"
   },

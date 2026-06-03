@@ -94,8 +94,9 @@ export const ERROR_MESSAGES = {
     message: `Directory "${name}" already exists`,
     suggestion: 'Use --force to overwrite, or choose a different project name',
   }),
-  OPENAI_NOT_CONFIGURED: {
-    message: 'OpenAI API key not configured',
-    suggestion: 'Set OPENAI_API_KEY environment variable for AI-powered analysis',
+  AI_NOT_CONFIGURED: {
+    message: 'AI service not configured',
+    suggestion:
+      'Set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable for AI-powered analysis',
   },
 };

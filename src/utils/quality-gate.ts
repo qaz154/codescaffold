@@ -18,28 +18,13 @@ export interface QualityReport {
 export function runQualityChecks(projectPath: string): QualityReport {
   const checks: QualityCheck[] = [];
 
-  // 检查 package.json
   checks.push(checkPackageJson(projectPath));
-
-  // 检查 tsconfig.json
   checks.push(checkTsConfig(projectPath));
-
-  // 检查 .gitignore
   checks.push(checkGitignore(projectPath));
-
-  // 检查 README.md
   checks.push(checkReadme(projectPath));
-
-  // 检查 .env.example
   checks.push(checkEnvExample(projectPath));
-
-  // 检查 Dockerfile
   checks.push(checkDockerfile(projectPath));
-
-  // 检查测试文件
   checks.push(checkTestFiles(projectPath));
-
-  // 检查代码规范
   checks.push(checkCodeStyle(projectPath));
 
   const passed = checks.every(c => c.passed || c.severity !== 'error');
@@ -51,7 +36,12 @@ export function runQualityChecks(projectPath: string): QualityReport {
 function checkPackageJson(projectPath: string): QualityCheck {
   const pkgPath = path.join(projectPath, 'package.json');
   if (!fs.existsSync(pkgPath)) {
-    return { name: 'package.json', passed: false, message: '缺少 package.json', severity: 'error' };
+    return {
+      name: 'package.json',
+      passed: false,
+      message: 'Missing package.json',
+      severity: 'error',
+    };
   }
 
   try {
@@ -60,16 +50,16 @@ function checkPackageJson(projectPath: string): QualityCheck {
       return {
         name: 'package.json',
         passed: false,
-        message: 'package.json 缺少 name 或 version',
+        message: 'package.json missing name or version',
         severity: 'warning',
       };
     }
-    return { name: 'package.json', passed: true, message: 'package.json 有效', severity: 'info' };
+    return { name: 'package.json', passed: true, message: 'package.json valid', severity: 'info' };
   } catch {
     return {
       name: 'package.json',
       passed: false,
-      message: 'package.json 格式错误',
+      message: 'package.json has invalid JSON',
       severity: 'error',
     };
   }
@@ -77,15 +67,32 @@ function checkPackageJson(projectPath: string): QualityCheck {
 
 function checkTsConfig(projectPath: string): QualityCheck {
   const tsConfigPath = path.join(projectPath, 'tsconfig.json');
-  if (fs.existsSync(tsConfigPath)) {
-    return { name: 'tsconfig.json', passed: true, message: 'tsconfig.json 存在', severity: 'info' };
+  if (!fs.existsSync(tsConfigPath)) {
+    return {
+      name: 'tsconfig.json',
+      passed: false,
+      message: 'Missing tsconfig.json',
+      severity: 'warning',
+    };
   }
-  return {
-    name: 'tsconfig.json',
-    passed: false,
-    message: '缺少 tsconfig.json',
-    severity: 'warning',
-  };
+
+  try {
+    const content = fs.readFileSync(tsConfigPath, 'utf-8');
+    JSON.parse(content);
+    return {
+      name: 'tsconfig.json',
+      passed: true,
+      message: 'tsconfig.json parseable',
+      severity: 'info',
+    };
+  } catch {
+    return {
+      name: 'tsconfig.json',
+      passed: false,
+      message: 'tsconfig.json has invalid JSON',
+      severity: 'error',
+    };
+  }
 }
 
 function checkGitignore(projectPath: string): QualityCheck {
@@ -93,16 +100,21 @@ function checkGitignore(projectPath: string): QualityCheck {
   if (fs.existsSync(gitignorePath)) {
     const content = fs.readFileSync(gitignorePath, 'utf-8');
     if (content.includes('node_modules') && content.includes('.env')) {
-      return { name: '.gitignore', passed: true, message: '.gitignore 配置正确', severity: 'info' };
+      return {
+        name: '.gitignore',
+        passed: true,
+        message: '.gitignore configured correctly',
+        severity: 'info',
+      };
     }
     return {
       name: '.gitignore',
       passed: false,
-      message: '.gitignore 缺少重要配置',
+      message: '.gitignore missing important entries',
       severity: 'warning',
     };
   }
-  return { name: '.gitignore', passed: false, message: '缺少 .gitignore', severity: 'error' };
+  return { name: '.gitignore', passed: false, message: 'Missing .gitignore', severity: 'error' };
 }
 
 function checkReadme(projectPath: string): QualityCheck {
@@ -110,27 +122,42 @@ function checkReadme(projectPath: string): QualityCheck {
   if (fs.existsSync(readmePath)) {
     const content = fs.readFileSync(readmePath, 'utf-8');
     if (content.length > 100) {
-      return { name: 'README.md', passed: true, message: 'README.md 内容充实', severity: 'info' };
+      return {
+        name: 'README.md',
+        passed: true,
+        message: 'README.md has content',
+        severity: 'info',
+      };
     }
-    return { name: 'README.md', passed: false, message: 'README.md 内容过少', severity: 'warning' };
+    return {
+      name: 'README.md',
+      passed: false,
+      message: 'README.md content too short',
+      severity: 'warning',
+    };
   }
-  return { name: 'README.md', passed: false, message: '缺少 README.md', severity: 'warning' };
+  return { name: 'README.md', passed: false, message: 'Missing README.md', severity: 'warning' };
 }
 
 function checkEnvExample(projectPath: string): QualityCheck {
   const envPath = path.join(projectPath, '.env.example');
   if (fs.existsSync(envPath)) {
-    return { name: '.env.example', passed: true, message: '.env.example 存在', severity: 'info' };
+    return {
+      name: '.env.example',
+      passed: true,
+      message: '.env.example present',
+      severity: 'info',
+    };
   }
-  return { name: '.env.example', passed: false, message: '缺少 .env.example', severity: 'info' };
+  return { name: '.env.example', passed: false, message: 'Missing .env.example', severity: 'info' };
 }
 
 function checkDockerfile(projectPath: string): QualityCheck {
   const dockerPath = path.join(projectPath, 'Dockerfile');
   if (fs.existsSync(dockerPath)) {
-    return { name: 'Dockerfile', passed: true, message: 'Dockerfile 存在', severity: 'info' };
+    return { name: 'Dockerfile', passed: true, message: 'Dockerfile present', severity: 'info' };
   }
-  return { name: 'Dockerfile', passed: false, message: '缺少 Dockerfile', severity: 'info' };
+  return { name: 'Dockerfile', passed: false, message: 'Missing Dockerfile', severity: 'info' };
 }
 
 function checkTestFiles(projectPath: string): QualityCheck {
@@ -140,9 +167,14 @@ function checkTestFiles(projectPath: string): QualityCheck {
     fs.existsSync(path.join(projectPath, 'src', '__tests__'));
 
   if (hasTests) {
-    return { name: '测试文件', passed: true, message: '测试目录存在', severity: 'info' };
+    return {
+      name: 'Test files',
+      passed: true,
+      message: 'Test directory present',
+      severity: 'info',
+    };
   }
-  return { name: '测试文件', passed: false, message: '缺少测试目录', severity: 'info' };
+  return { name: 'Test files', passed: false, message: 'Missing test directory', severity: 'info' };
 }
 
 function checkCodeStyle(projectPath: string): QualityCheck {
@@ -155,13 +187,23 @@ function checkCodeStyle(projectPath: string): QualityCheck {
     fs.existsSync(path.join(projectPath, 'eslint.config.js'));
 
   if (hasPrettier || hasEslint) {
-    return { name: '代码规范', passed: true, message: '代码规范配置存在', severity: 'info' };
+    return {
+      name: 'Code style',
+      passed: true,
+      message: 'Code style config present',
+      severity: 'info',
+    };
   }
-  return { name: '代码规范', passed: false, message: '缺少代码规范配置', severity: 'info' };
+  return {
+    name: 'Code style',
+    passed: false,
+    message: 'Missing code style config',
+    severity: 'info',
+  };
 }
 
 export function printQualityReport(report: QualityReport): void {
-  console.log(chalk.cyan('\n🔍 代码质量检查:\n'));
+  console.log(chalk.cyan('\nQuality Report:\n'));
 
   for (const check of report.checks) {
     const icon = check.passed
@@ -174,12 +216,12 @@ export function printQualityReport(report: QualityReport): void {
   }
 
   console.log(
-    `\n${chalk.bold('质量评分:')} ${report.score >= 80 ? chalk.green(report.score + '%') : chalk.yellow(report.score + '%')}`
+    `\n${chalk.bold('Score:')} ${report.score >= 80 ? chalk.green(report.score + '%') : chalk.yellow(report.score + '%')}`
   );
 
   if (report.passed) {
-    console.log(chalk.green('\n✅ 质量检查通过'));
+    console.log(chalk.green('\nQuality checks passed'));
   } else {
-    console.log(chalk.red('\n❌ 质量检查未通过'));
+    console.log(chalk.red('\nQuality checks failed'));
   }
 }

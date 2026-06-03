@@ -93,7 +93,7 @@ describe('ERROR_MESSAGES', () => {
     expect(result.message).toContain('my-project');
   });
 
-  it('should have OPENAI_NOT_CONFIGURED', () => {
-    expect(ERROR_MESSAGES.OPENAI_NOT_CONFIGURED.message).toContain('API key');
+  it('should have AI_NOT_CONFIGURED', () => {
+    expect(ERROR_MESSAGES.AI_NOT_CONFIGURED.message).toContain('AI service');
   });
 });

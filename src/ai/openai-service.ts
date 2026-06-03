@@ -72,15 +72,14 @@ export class AIService {
   private apiKey: string | null = null;
   private provider: 'openai' | 'claude' | 'local' = 'openai';
   private model: string = 'gpt-4o-mini';
+  private initialized = false;
+  private initConfig: AIServiceConfig = {};
 
   constructor(config: AIServiceConfig = {}) {
     this.provider = config.provider || this.detectProvider();
     this.model = config.model || this.getDefaultModel();
     this.apiKey = config.apiKey || this.getApiKey();
-
-    if (this.apiKey || this.provider === 'local') {
-      this.initializeClient(config);
-    }
+    this.initConfig = config;
   }
 
   private detectProvider(): 'openai' | 'claude' | 'local' {
@@ -114,25 +113,22 @@ export class AIService {
     }
   }
 
-  private initializeClient(config: AIServiceConfig): void {
+  private async initializeClient(config: AIServiceConfig): Promise<void> {
     if (this.provider === 'claude') {
-      // Use real Anthropic SDK
-      const Anthropic = require('@anthropic-ai/sdk').default;
+      const { default: Anthropic } = await import('@anthropic-ai/sdk');
       this.anthropicClient = new Anthropic({
         apiKey: this.apiKey || undefined,
         timeout: config.timeout || DEFAULT_TIMEOUT_MS,
       });
     } else if (this.provider === 'local') {
-      // Local LLM via OpenAI-compatible API
-      const OpenAI = require('openai').default;
+      const { default: OpenAI } = await import('openai');
       this.openAIClient = new OpenAI({
         apiKey: 'ollama',
         baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1',
         timeout: config.timeout || DEFAULT_TIMEOUT_MS,
       });
     } else {
-      // OpenAI
-      const OpenAI = require('openai').default;
+      const { default: OpenAI } = await import('openai');
       this.openAIClient = new OpenAI({
         apiKey: this.apiKey || undefined,
         baseURL: config.baseURL,
@@ -142,7 +138,16 @@ export class AIService {
   }
 
   isConfigured(): boolean {
-    return this.anthropicClient !== null || this.openAIClient !== null;
+    return this.initialized
+      ? this.anthropicClient !== null || this.openAIClient !== null
+      : !!(this.apiKey || this.provider === 'local');
+  }
+
+  private async ensureClient(): Promise<void> {
+    if (!this.initialized && (this.apiKey || this.provider === 'local')) {
+      await this.initializeClient(this.initConfig);
+      this.initialized = true;
+    }
   }
 
   getProviderInfo(): { provider: string; model: string } {
@@ -150,6 +155,7 @@ export class AIService {
   }
 
   async analyzeRequirements(requirement: string): Promise<AIAnalysisResult> {
+    await this.ensureClient();
     if (!this.isConfigured()) {
       throw new Error(
         'AI service not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.'
@@ -232,6 +238,7 @@ export class AIService {
     userPrompt: string,
     schema: z.ZodSchema<T>
   ): Promise<T> {
+    await this.ensureClient();
     if (!this.isConfigured()) {
       throw new Error(
         'AI service not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.'

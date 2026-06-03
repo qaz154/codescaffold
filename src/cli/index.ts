@@ -165,15 +165,15 @@ program
 
 program
   .command('compose')
-  .description('使用组件化方式创建项目')
-  .option('-n, --name <name>', '项目名称')
-  .option('--minimal', '最小化模式（仅选择框架）')
-  .option('--empty', '空模式（无数据库、认证、UI）')
-  .option('--defaults', '零配置模式（使用推荐默认值）')
-  .option('--yes', '使用默认配置，跳过确认')
-  .option('--pkg <manager>', '包管理器 (npm/yarn/pnpm/bun)')
-  .option('--current-dir', '在当前目录创建项目')
-  .option('-o, --output <path>', '输出目录', '.')
+  .description('Create project from composable components')
+  .option('-n, --name <name>', 'Project name')
+  .option('--minimal', 'Minimal mode (framework only)')
+  .option('--empty', 'Empty mode (no database, auth, or UI)')
+  .option('--defaults', 'Zero-config mode (use recommended defaults)')
+  .option('--yes', 'Accept defaults, skip confirmation')
+  .option('--pkg <manager>', 'Package manager (npm/yarn/pnpm/bun)')
+  .option('--current-dir', 'Create project in current directory')
+  .option('-o, --output <path>', 'Output directory', '.')
   .action(async options => {
     const { composeCommand } = await import('../commands/compose.js');
     await composeCommand(options);
@@ -181,12 +181,12 @@ program
 
 program
   .command('template')
-  .description('管理社区模板')
-  .option('-l, --list', '列出所有模板')
-  .option('-a, --add <source>', '添加模板 (github:user/repo)')
-  .option('-r, --remove <name>', '移除模板')
-  .option('-s, --search <query>', '搜索模板')
-  .option('-v, --version <name>', '查看模板版本')
+  .description('Manage community templates')
+  .option('-l, --list', 'List all templates')
+  .option('-a, --add <source>', 'Add template (github:user/repo)')
+  .option('-r, --remove <name>', 'Remove template')
+  .option('-s, --search <query>', 'Search templates')
+  .option('-v, --version <name>', 'View template version')
   .action(async options => {
     const { templateCommand } = await import('../commands/template.js');
     await templateCommand(options);
@@ -194,11 +194,11 @@ program
 
 program
   .command('migrate')
-  .description('从现有项目迁移到新架构')
-  .option('-s, --source <path>', '源项目路径', '.')
-  .option('-t, --target <path>', '目标路径')
-  .option('-f, --framework <name>', '目标框架')
-  .option('--dry', '仅预览，不实际迁移')
+  .description('Migrate from existing project to new architecture')
+  .option('-s, --source <path>', 'Source project path', '.')
+  .option('-t, --target <path>', 'Target path')
+  .option('-f, --framework <name>', 'Target framework')
+  .option('--dry', 'Preview only, no actual migration')
   .action(async options => {
     const { migrateCommand } = await import('../commands/migrate.js');
     await migrateCommand(options);
